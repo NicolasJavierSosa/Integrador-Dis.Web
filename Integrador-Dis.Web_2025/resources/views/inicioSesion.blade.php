@@ -6,7 +6,7 @@
   <title>AureaCursos</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/Integrador-Dis.Web_2025/resources/css/style.css" />
+  <link rel="stylesheet" href="{{asset('css/style.css')}}" />
 </head>
 <body>
   <div id="pantalla" class="w-full max-w-md bg-white rounded-xl shadow-xl overflow-hidden border border-gray-200">

@@ -1,7 +1,7 @@
 @extends('app')
 @section('tittle', 'AureaCursos - Gestion de Cursos')
 @push('css')
-    <link rel="stylesheet" href="{{asset('css/style.css')}}">
+    <link rel="stylesheet" href="{{asset('css/gestion.css')}}">
 @endpush
 
 @section('contenido')

@@ -3,15 +3,9 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('InicioSesion');
+    return view('welcome');
 });
 
-//Route::view('/Inicio', 'Inicio' ); es lo mismo que lo siguiente:
-Route::get('/inicioAdmin', function () {
-    return view('admin.inicioAdmin', ['nombre' => 'Administrador'] );
-});
-
-//
 Route::get('/app', function () {
     return view('app', ['nombre' => 'Adminn'] );
 });

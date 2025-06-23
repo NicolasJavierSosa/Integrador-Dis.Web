@@ -6,7 +6,7 @@
     <title>"@yield('title', 'AureaCursos')"</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/Integrador-Dis.Web_2025/resources/css/headerFooter.css">
+    <link rel="stylesheet" href="{{asset('css/headerFooter.css')}}" />
     <!-- apilar estilos css para añadir estilos a parte de los establecidos aca -->
     @stack('css')
 </head>
