@@ -1,0 +1,117 @@
+body {
+    font-family: "Inter", sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Colores y gradientes personalizados */
+.bg-gradient-custom-purple {
+    background: linear-gradient(to right, #6A0DAD, #8A2BE2);
+    /* Morado oscuro a violeta */
+}
+
+.bg-gradient-custom-lilac {
+    background: linear-gradient(to right, #B065F6, #DDA0DD);
+    /* Lila a lila claro */
+}
+
+.text-custom-white {
+    color: #FFFFFF;
+    /* Blanco */
+}
+
+.text-custom-light-purple {
+    color: #E0BBE4;
+    /* Un lila muy claro */
+}
+
+.text-custom-dark-purple {
+    color: #5D00A5;
+    /* Un morado muy oscuro para contrastes */
+}
+
+.hover-scale-105:hover {
+    transform: scale(1.05);
+}
+
+.transition-all {
+    transition-property: all;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+}
+
+/* Estilo para los iconos de redes sociales */
+.social-icon {
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* Estilo para los campos de fecha con icono de calendario */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
+
+input[type="date"] {
+    position: relative;
+}
+
+input[type="date"]::after {
+    content: "\f073";
+    /* Icono de calendario de Font Awesome */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8A2BE2;
+    /* Color del icono */
+    pointer-events: none;
+    /* Asegura que el clic pase al input */
+}
+
+/* Estilos para los tags de elementos seleccionados */
+.selected-tag {
+    display: flex;
+    align-items: center;
+    background-color: #B065F6;
+    /* Color lila */
+    color: white;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    /* rounded-full */
+    font-size: 0.875rem;
+    /* text-sm */
+    font-weight: 600;
+    /* font-semibold */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.selected-tag button {
+    margin-left: 8px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.2s ease-in-out;
+}
+
+.selected-tag button:hover {
+    color: #E0BBE4;
+    /* Lila más claro */
+}

@@ -1,0 +1,49 @@
+body {
+    font-family: "Inter", sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+}
+
+/* Colores y gradientes personalizados */
+.bg-gradient-custom-purple {
+    background: linear-gradient(to right, #6A0DAD, #8A2BE2);
+    /* Morado oscuro a violeta */
+}
+
+.bg-gradient-custom-lilac {
+    background: linear-gradient(to right, #B065F6, #DDA0DD);
+    /* Lila a lila claro */
+}
+
+.text-custom-white {
+    color: #FFFFFF;
+    /* Blanco */
+}
+
+.text-custom-light-purple {
+    color: #E0BBE4;
+    /* Un lila muy claro */
+}
+
+.text-custom-dark-purple {
+    color: #5D00A5;
+    /* Un morado muy oscuro para contrastes */
+}
+
+.hover-scale-105:hover {
+    transform: scale(1.05);
+}
+
+.transition-all {
+    transition-property: all;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+}
+
+/* Estilo para los iconos de redes sociales */
+.social-icon {
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+}

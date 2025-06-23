@@ -6,13 +6,13 @@
   <title>AureaCursos</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/Integrador-Dis.Web_2025/resources/css/style.css" />
 </head>
 <body>
   <div id="pantalla" class="w-full max-w-md bg-white rounded-xl shadow-xl overflow-hidden border border-gray-200">
     <header class="bg-purple-700 p-4 flex items-center justify-start rounded-t-xl">
       <div id="icono-logo">
-        <img src="imagenes/logo.png" alt="Logo del Instituto" id="logo-img">
+        <img src="/Integrador-Dis.Web_2025/resources/imagenes/logo.png" alt="Logo del Instituto" id="logo-img">
       </div>
       <h1 class="text-white text-lg font-semibold">Instituto XXX</h1>
     </header>
@@ -21,7 +21,7 @@
       <div class="flex bg-gray-100 rounded-full p-1 mb-6 border border-gray-300">
         <button id="loginTab" class="flex-1 py-2 px-4 text-center text-purple-700 font-medium bg-white rounded-full shadow-sm">
         Iniciar Sesion</button>
-        <button id="signupTab" data-url="registro.php" data-url="registro.php" class="flex-1 py-2 px-4 text-center text-gray-600 font-medium rounded-full">
+        <button id="signupTab" class="flex-1 py-2 px-4 text-center text-gray-600 font-medium rounded-full">
         Registrarse</button>
       </div>
     <main id="loginFormContainer">
@@ -48,7 +48,7 @@
         </button>
       </form>
       <p class="mt-6 text-center text-sm text-gray-600">
-        ¿No tienes cuenta? <a href="registro.php" data-cargar id="switchToSignupLink" class="font-medium text-purple-600 hover:text-purple-500 hover:underline">Regístrate</a>
+        ¿No tienes cuenta? <a href="registro.php" id="switchToSignupLink" class="font-medium text-purple-600 hover:text-purple-500 hover:underline">Regístrate</a>
       </p>
     </main>
     </div>
