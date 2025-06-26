@@ -17,7 +17,7 @@
                         <img id="userImagePreview" src="https://placehold.co/192x192/CCCCCC/333333?text=Imagen%20de%20usuario" alt="User image preview" class="object-cover w-full h-full">
                     </div>
                     <input type="file" id="userImage" class="hidden" accept="image/*" onchange="previewUserImage(event)">
-                    <label for="userImage" class="bg-custom-lilac text-custom-white px-6 py-2 rounded-full font-semibold cursor-pointer hover:bg-gradient-custom-lilac transform hover-scale-105 transition-all shadow-md">
+                    <label for="userImage"  class="bg-purple-400 text-white px-6 py-2 rounded-full font-semibold cursor-pointer hover:bg-purple-500 transform hover:scale-105 transition-all shadow-md">
                         Añadir foto
                     </label>
                 </div>
@@ -57,7 +57,6 @@
                         <input list="ciudades" id="ciudad" name="ciudad"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition duration-200"
                                 placeholder="Escribí tu ciudad">
-
                         <datalist id="ciudades">
                             <option value="Buenos Aires">
                             <option value="Córdoba">
@@ -91,16 +90,22 @@
                     <div class="col-span-3">
                         <label for="role" class="block text-gray-700 text-lg font-semibold mb-2">Rol:</label>
                         <div class="flex items-center">
-                            <select id="roleSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
+                            <select id="roleSelect" class="w-48 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
                                 <option value="">Selecciona un rol</option>
                                 <option value="Administrador">Administrador</option>
                                 <option value="Docente">Docente</option>
                                 <option value="Estudiante">Estudiante</option>
                                 <option value="Invitado">Invitado</option>
                             </select>
-                            <button onclick="addNewRole()" class="ml-2 bg-custom-lilac text-custom-white px-4 py-2 rounded-full font-semibold shadow-md hover:bg-gradient-custom-lilac transition-all transform hover-scale-105" title="Añadir nuevo rol">
+                            <button onclick="addNewRole()"  class="bg-purple-400 text-white px-6 py-2 rounded-full font-semibold cursor-pointer hover:bg-purple-500 transform hover:scale-105 transition-all shadow-md" style="padding-right: 20px; margin-right: 30px; margin-left: 10px;">
                                 Nuevo Rol
                             </button>
+                            <!-- Combo de Estado -->
+                            <select id="estadoSelect" class="w-48 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
+                                <option value="">Estado</option>
+                                <option value="Alta">Alta</option>
+                                <option value="Baja">Baja</option>
+                            </select>
                         </div>
                     </div>
                 </div>

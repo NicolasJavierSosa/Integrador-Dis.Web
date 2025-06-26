@@ -56,14 +56,14 @@
                                 <option value="Idiomas">Idiomas</option>
                                 <option value="Negocios">Negocios</option>
                             </select>
-                            <button onclick="addCategoryFromSelect()" class="ml-2 bg-custom-lilac text-custom-white px-4 py-2 rounded-full font-semibold shadow-md hover:bg-gradient-custom-lilac transition-all transform hover-scale-105" title="Añadir categoría seleccionada">
+                            <button onclick="addCategoryFromSelect()" class="ml-2 bg-purple-400 text-custom-white px-4 py-2 rounded-full font-semibold shadow-md hover:bg-gradient-custom-lilac transition-all transform hover-scale-105" title="Añadir categoría seleccionada">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
                         <div class="flex mt-2">
                             <input type="text" id="customCategoryInput" placeholder="Añadir otra categoría" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
-                            <button onclick="addCustomCategory()" class="ml-2 bg-custom-lilac text-custom-white px-4 py-2 rounded-full font-semibold shadow-md hover:bg-gradient-custom-lilac transition-all transform hover-scale-105" title="Añadir categoría personalizada">
-                                <i class="fas fa-plus"></i>
+                            <button onclick="addCustomCategory()" class="ml-2 bg-purple-400 text-custom-white px-4 py-2 rounded-full font-semibold shadow-md hover:bg-gradient-custom-lilac transition-all transform hover-scale-105" title="Añadir nueva categoría">
+                                Nueva categoría
                             </button>
                         </div>
                         <div id="selectedCategories" class="mt-3 flex flex-wrap gap-2 p-2 bg-gray-100 rounded-lg border border-gray-200 min-h-[40px]">
@@ -180,6 +180,14 @@
 
                         <p class="text-sm text-gray-500 mt-1">* Ingresá un día entre 1 y 29. Recomendado: 5, 10 o 15.</p>
                     </div>
+                    <!-- Combo de Estado -->
+                    <div>
+                        <label for="estadoSelect" class="block text-gray-700 text-lg font-semibold mb-2">Estado:</label>
+                        <select id="estadoSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
+                            <option value="">Estado</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Baja">Baja</option>
+                        </select>
                 </div>
             </div>
             
