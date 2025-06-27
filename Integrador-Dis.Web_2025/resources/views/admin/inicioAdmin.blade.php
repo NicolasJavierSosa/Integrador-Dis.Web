@@ -1,7 +1,7 @@
 @extends('app')
 @section('tittle', 'AureaCursos - Inicio')
 @push('css')
-    <link rel="stylesheet" href="{{asset('css/style.css')}}">
+    <link rel="stylesheet" href="{{asset('css/inicios.css')}}" />
 @endpush
 
 @section('contenido')
