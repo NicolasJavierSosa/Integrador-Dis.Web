@@ -1,18 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin', function () {
+        return view('admin.gestionCursos');
+    })->name('admin');
+    Route::post('/login', [AuthController::class, 'logout'])->name('logout');
+});
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
-Route::get('/app', function () {
-    return view('app', ['nombre' => 'Adminn'] );
-});
-
-Route::get('/gestionCursos', function () {
-    return view('admin.gestionCursos', ['nombre' => 'Adminn'] );
-});
-Route::get('/gestionUsuarios', function () {
-    return view('admin.gestionUsuarios', ['nombre' => 'Adminn'] );
+Route::middleware((['guest']))->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.store');
 });

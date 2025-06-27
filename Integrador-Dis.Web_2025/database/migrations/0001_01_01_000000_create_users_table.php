@@ -13,10 +13,15 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('dni')->unique()->default('0'); // Documento Nacional de Identidad
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('phone')->nullable(); // Teléfono opcional
+            $table->string('address')->nullable(); // Dirección opcional
+            $table->date('birth_date')->nullable(); // Fecha de nacimiento opcional
+            $table->string('role')->default('student'); // El rol por defecto es 'student'
             $table->rememberToken();
             $table->timestamps();
         });
