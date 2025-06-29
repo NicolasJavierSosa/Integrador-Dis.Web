@@ -40,7 +40,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-sm font-medium text-gray-600">Total Cursos</p>
-                            <p class="text-2xl font-bold text-gray-900">0</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $courses->count() ?? 0 }}</p>
                         </div>
                     </div>
                 </div>
@@ -243,7 +243,7 @@
             <div class="mt-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl p-8 text-white">
                 <h2 class="text-2xl font-bold mb-6">Accesos Rápidos</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <button class="bg-white bg-opacity-20 p-4 rounded-lg hover:bg-opacity-30 transition-all duration-300">
+                    <button class="bg-white bg-opacity-20 p-4 rounded-lg hover:bg-opacity-30 transition-all duration-300" onclick="window.location.href='{{ route('admin.users') }}'">
                         <i class="fas fa-user-plus text-2xl mb-2"></i>
                         <p class="text-sm font-medium">Nuevo Usuario</p>
                     </button>

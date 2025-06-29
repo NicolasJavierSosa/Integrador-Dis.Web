@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -20,8 +21,9 @@ class AdminController extends Controller
         }
 
         $users = User::all();
+        $courses = Course::all();
 
-        return view('admin.dashboard', compact('users'));
+        return view('admin.dashboard', compact('users', 'courses'));
     }
 
     public function users() {
@@ -248,4 +250,6 @@ class AdminController extends Controller
             return redirect()->back()->with('error', 'Error al eliminar el usuario');
         }
     }
+
+
 }
