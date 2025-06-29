@@ -18,9 +18,8 @@ Route::get('/', function () {
 Route::middleware((['guest']))->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-    Route::get('/register', function () {
-        return view('auth.register');
-    })->name('registro');
+    Route::get('/registro', [AuthController::class, 'showRegister'])->name('registro');
+    Route::post('/registro', [AuthController::class, 'register'])->name('register.post');
 });
 
 Route::middleware(['auth'])->group(function () {
