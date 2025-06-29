@@ -9,10 +9,10 @@ class Curso extends Model
 {
     use HasFactory;
 
-    protected $table = 'cursos'; 
-    protected $primaryKey = 'codigo'; 
-    public $incrementing = false;
-    protected $keyType = 'string';
+    protected $table = 'cursos';
+    protected $primaryKey = 'codigo';  // Clave primaria personalizada
+    public $incrementing = false;      // Clave string, no autoincremental
+    protected $keyType = 'string';     // Es string
 
     protected $fillable = [
         'codigo',
@@ -33,4 +33,17 @@ class Curso extends Model
         'fecha_limite_inscripcion',
         'horario',
     ];
+
+    // 🔑 Relación Many-to-Many hacia User usando tabla pivot
+    public function usuarios()
+    {
+        return $this->belongsToMany(
+            User::class,        // Modelo relacionado
+            'inscripcions',     // Tabla pivot
+            'curso_codigo',     // FK de Curso en pivot
+            'user_id',          // FK de User en pivot
+            'codigo',           // Clave local en Curso
+            'id'                // Clave local en User
+        );
+    }
 }
