@@ -2,6 +2,59 @@
 @section('tittle', 'AureaCursos - Gestion de Cursos')
 @push('css')
     <link rel="stylesheet" href="{{asset('css/gestion.css')}}">
+    <style>
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed; /* Asegura que cubra toda la ventana */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 50; /* Z-index alto para que aparezca por encima de todo */
+        }
+        .modal-overlay.hidden {
+            display: none;
+        }
+        .modal-content {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.3s ease-out;
+            max-height: 90vh; /* Ensure modal content itself can scroll if it's too long */
+            overflow-y: auto; /* Enable vertical scrolling within the modal if content overflows */
+        }
+        .modal-overlay.active .modal-content {
+            opacity: 1;
+            transform: scale(1);
+        }
+        /* Estilo para el cuadro de alerta personalizado */
+        #custom-alert {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #10b981; /* Verde esmeralda */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: all 0.3s ease-in-out;
+        }
+        #custom-alert.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Estilo para contenido editable */
+        [contenteditable="true"] {
+            outline: 2px dashed #a78bfa; /* Borde punteado lila */
+            padding: 4px;
+            border-radius: 4px;
+        }
+    </style>
 @endpush
 
 @section('contenido')
@@ -62,7 +115,7 @@
                         </div>
                         <div class="flex mt-2">
                             <input type="text" id="customCategoryInput" placeholder="Añadir otra categoría" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
-                            <button onclick="addCustomCategory()" class="ml-2 bg-purple-400 text-custom-white px-4 py-2 rounded-full font-semibold shadow-md hover:bg-gradient-custom-lilac transition-all transform hover-scale-105" title="Añadir nueva categoría">
+                            <button onclick="openAddCategoryModal()" class="ml-2 bg-purple-400 text-custom-white px-4 py-2 rounded-full font-semibold shadow-md hover:bg-gradient-custom-lilac transition-all transform hover-scale-105" title="Añadir nueva categoría">
                                 Nueva categoría
                             </button>
                         </div>
@@ -111,14 +164,14 @@
                                 <option value="Carlos López">Carlos López</option>
                                 <option value="Ana Martínez">Ana Martínez</option>
                             </select>
-                            <button onclick="addInstructorFromSelect()" class="ml-2 bg-custom-lilac text-custom-white px-4 py-2 rounded-full font-semibold shadow-md hover:bg-gradient-custom-lilac transition-all transform hover-scale-105" title="Añadir docente seleccionado">
+                            <button onclick="addInstructorFromSelect()" class="ml-2 bg-gradient-custom-lilac text-custom-white px-4 py-2 rounded-full font-semibold shadow-md hover:bg-gradient-custom-lilac transition-all transform hover-scale-105" title="Añadir docente seleccionado">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
                         <div class="flex mt-2">
                             <input type="text" id="customInstructorInput" placeholder="Añadir otro docente" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
-                            <button onclick="addCustomInstructor()" class="ml-2 bg-custom-lilac text-custom-white px-4 py-2 rounded-full font-semibold shadow-md hover:bg-gradient-custom-lilac transition-all transform hover-scale-105" title="Añadir docente personalizado">
-                                <i class="fas fa-plus"></i>
+                            <button onclick="window.location='{{ route('gestionUsuarios') }}'" class="ml-2 bg-gradient-custom-lilac text-custom-white px-4 py-2 rounded-full font-semibold shadow-md hover:bg-gradient-custom-lilac transition-all transform hover-scale-105" title="Añadir docente">
+                                Registrar docente
                             </button>
                         </div>
                         <div id="selectedInstructors" class="mt-3 flex flex-wrap gap-2 p-2 bg-gray-100 rounded-lg border border-gray-200 min-h-[40px]">
@@ -200,6 +253,44 @@
                     Guardar
                 </button>
             </div>
+
+            <!-- Add Category Modal -->
+    <div id="add-category-modal" class="fixed inset-0 z-50 hidden modal-overlay">
+        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full relative transform transition-all duration-300 scale-95 opacity-0 modal-content">
+            <button onclick="closeModal('add-category-modal')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-3xl font-semibold">&times;</button>
+            <h3 class="text-2xl font-bold text-purple-800 mb-6 text-center">Gestionar Categorías</h3>
+
+            <!-- Sección para añadir nueva categoría -->
+            <div class="mb-8 p-4 border border-purple-200 rounded-lg">
+                <h4 class="text-xl font-semibold text-purple-700 mb-4">Añadir Nueva Categoría</h4>
+                <div class="mb-4">
+                    <label for="new-category-name-input" class="block text-gray-700 text-sm font-bold mb-2">Nombre de la Categoría:</label>
+                    <input type="text" id="new-category-name-input" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-purple-500" placeholder="Ej: Programación">
+                </div>
+                <div class="mb-6">
+                    <label for="new-category-description-input" class="block text-gray-700 text-sm font-bold mb-2">Descripción:</label>
+                    <textarea id="new-category-description-input" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-purple-500" placeholder="Breve descripción de la categoría"></textarea>
+                </div>
+                <button onclick="addCategory()" class="btn-primary w-full py-3 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition duration-300 ease-in-out">
+                    Guardar Categoría
+                </button>
+            </div>
+
+            <!-- Sección para lista de categorías existentes -->
+            <div>
+                <h4 class="text-xl font-semibold text-purple-700 mb-4">Categorías Existentes</h4>
+                <div id="category-list" class="space-y-4">
+                    <!-- Las categorías se cargarán aquí -->
+                    <p class="text-gray-500 text-center" id="no-categories-message">No hay categorías registradas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Alert/Message Box -->
+    <div id="custom-alert" class="hidden">
+        <!-- El mensaje se insertará aquí -->
+    </div>
         </section>
 
         <!-- Cursos Registrados -->
@@ -251,4 +342,246 @@
 
 @push('scripts')
     <script src="{{asset('js/scripts.js')}}"></script>
+    <!-- Script para el modal de  categoria-->
+     <script>
+        // Array de categorías de ejemplo (simula tus datos existentes)
+        // Ahora incluye id, nombre y descripción
+        let categories = [
+            { id: 1, name: 'Programación', description: 'Cursos relacionados con el desarrollo de software y lenguajes de programación.' },
+            { id: 2, name: 'Diseño Gráfico', description: 'Explora herramientas y principios de diseño visual, UX/UI.' },
+            { id: 3, name: 'Marketing Digital', description: 'Estrategias y herramientas para el posicionamiento y crecimiento online.' }
+        ];
+
+        let nextCategoryId = categories.length > 0 ? Math.max(...categories.map(c => c.id)) + 1 : 1;
+
+        /**
+         * Abre un modal genérico.
+         * @param {string} modalId - El ID del modal a abrir.
+         */
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            // Disable body scrolling when modal is open
+            document.body.style.overflow = 'hidden';
+
+            const modalContent = modal.querySelector('.modal-content');
+
+            if (modalId === 'add-category-modal') {
+                document.getElementById('new-category-name-input').value = ''; // Limpia el input al abrir
+                document.getElementById('new-category-description-input').value = ''; // Limpia el input al abrir
+                renderCategoryList(); // Renderiza la lista de categorías existentes
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.add('active');
+            }, 10);
+        }
+
+        /**
+         * Cierra un modal genérico.
+         * @param {string} modalId - El ID del modal a cerrar.
+         */
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+            // Re-enable body scrolling when modal is closed
+            document.body.style.overflow = ''; // or 'auto'
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300); // Coincide con la duración de la transición CSS
+        }
+
+        /**
+         * Abre específicamente el modal de gestionar categorías.
+         */
+        function openAddCategoryModal() {
+            openModal('add-category-modal');
+        }
+
+        /**
+         * Maneja la lógica para añadir una nueva categoría.
+         */
+        function addCategory() {
+            const nameInput = document.getElementById('new-category-name-input');
+            const descriptionInput = document.getElementById('new-category-description-input');
+            const newCategoryName = nameInput.value.trim();
+            const newCategoryDescription = descriptionInput.value.trim();
+
+            if (newCategoryName && newCategoryDescription) {
+                // Comprobar si la categoría ya existe por nombre
+                if (categories.some(c => c.name.toLowerCase() === newCategoryName.toLowerCase())) {
+                    showCustomAlert(`La categoría "${newCategoryName}" ya existe.`);
+                    return;
+                }
+
+                const newCategory = {
+                    id: nextCategoryId++,
+                    name: newCategoryName,
+                    description: newCategoryDescription
+                };
+                categories.push(newCategory);
+                showCustomAlert(`Categoría "${newCategoryName}" añadida.`);
+                console.log("Categorías actuales:", categories);
+                nameInput.value = ''; // Limpiar campos
+                descriptionInput.value = '';
+                renderCategoryList(); // Actualizar la lista
+                // En una aplicación real, aquí enviarías esta categoría a tu backend
+            } else {
+                showCustomAlert("Por favor, introduce el nombre y la descripción de la categoría.");
+            }
+        }
+
+        /**
+         * Renderiza la lista de categorías existentes en el modal.
+         */
+        function renderCategoryList() {
+            const categoryListDiv = document.getElementById('category-list');
+            categoryListDiv.innerHTML = ''; // Limpiar el contenido existente
+
+            if (categories.length === 0) {
+                categoryListDiv.innerHTML = '<p class="text-gray-500 text-center" id="no-categories-message">No hay categorías registradas.</p>';
+                return;
+            }
+
+            categories.forEach(category => {
+                const categoryCard = `
+                    <div id="category-${category.id}-card" class="bg-purple-50 p-4 rounded-lg shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                        <div class="flex-grow mb-2 sm:mb-0">
+                            <h5 id="category-${category.id}-name" class="text-lg font-bold text-purple-800" contenteditable="false">${category.name}</h5>
+                            <p id="category-${category.id}-description" class="text-gray-700 text-sm" contenteditable="false">${category.description}</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <!-- Botón de editar -->
+                            <button id="edit-category-${category.id}-btn" class="p-2 bg-blue-200 rounded-full hover:bg-blue-300 focus:outline-none" onclick="toggleCategoryEdit(${category.id})">
+                                <svg class="w-4 h-4 text-blue-700" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.38-2.828-2.829z"></path>
+                                </svg>
+                            </button>
+                            <!-- Botón de guardar (inicialmente oculto) -->
+                            <button id="save-category-${category.id}-btn" class="p-2 bg-green-200 rounded-full hover:bg-green-300 focus:outline-none hidden" onclick="saveCategory(${category.id})">
+                                <svg class="w-4 h-4 text-green-700" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </button>
+                            <!-- Botón de eliminar -->
+                            <button id="delete-category-${category.id}-btn" class="p-2 bg-red-200 rounded-full hover:bg-red-300 focus:outline-none" onclick="deleteCategory(${category.id})">
+                                <svg class="w-4 h-4 text-red-700" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm6 3a1 1 0 100 2v3a1 1 0 102 0v-3a1 1 0 00-2 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                categoryListDiv.innerHTML += categoryCard;
+            });
+        }
+
+        /**
+         * Habilita o deshabilita el modo de edición para una categoría específica.
+         * @param {number} categoryId - El ID de la categoría a editar.
+         */
+        function toggleCategoryEdit(categoryId) {
+            const nameElement = document.getElementById(`category-${categoryId}-name`);
+            const descriptionElement = document.getElementById(`category-${categoryId}-description`);
+            const editButton = document.getElementById(`edit-category-${categoryId}-btn`);
+            const saveButton = document.getElementById(`save-category-${categoryId}-btn`);
+            const deleteButton = document.getElementById(`delete-category-${categoryId}-btn`);
+
+            let isInEditMode = nameElement.contentEditable === 'true';
+
+            if (isInEditMode) {
+                // Si estaba en modo edición, deshabilitar (esto debería ser manejado por saveCategory)
+                // Este caso se usa si se desea cancelar sin guardar (no implementado un botón de cancelar)
+                nameElement.contentEditable = 'false';
+                descriptionElement.contentEditable = 'false';
+                nameElement.style.outline = '';
+                descriptionElement.style.outline = '';
+                editButton.classList.remove('hidden');
+                saveButton.classList.add('hidden');
+                deleteButton.classList.remove('hidden'); // Vuelve a mostrar el botón de eliminar
+            } else {
+                // Entrar en modo edición
+                nameElement.contentEditable = 'true';
+                descriptionElement.contentEditable = 'true';
+                nameElement.focus(); // Pone el foco en el nombre para editar
+                editButton.classList.add('hidden');
+                saveButton.classList.remove('hidden');
+                deleteButton.classList.add('hidden'); // Oculta el botón de eliminar mientras se edita
+            }
+        }
+
+        /**
+         * Guarda los cambios de una categoría editada.
+         * @param {number} categoryId - El ID de la categoría a guardar.
+         */
+        function saveCategory(categoryId) {
+            const nameElement = document.getElementById(`category-${categoryId}-name`);
+            const descriptionElement = document.getElementById(`category-${categoryId}-description`);
+
+            const updatedName = nameElement.textContent.trim();
+            const updatedDescription = descriptionElement.textContent.trim();
+
+            if (!updatedName || !updatedDescription) {
+                showCustomAlert("El nombre y la descripción de la categoría no pueden estar vacíos.");
+                return;
+            }
+
+            // Comprobar si el nombre de categoría actualizado ya existe en otra categoría
+            const existingCategory = categories.find(c => c.name.toLowerCase() === updatedName.toLowerCase() && c.id !== categoryId);
+            if (existingCategory) {
+                showCustomAlert(`La categoría "${updatedName}" ya existe en otra entrada.`);
+                // Revertir el nombre en la UI para evitar confusión
+                const originalCategory = categories.find(c => c.id === categoryId);
+                if (originalCategory) {
+                    nameElement.textContent = originalCategory.name;
+                }
+                return;
+            }
+
+            const categoryIndex = categories.findIndex(c => c.id === categoryId);
+            if (categoryIndex !== -1) {
+                categories[categoryIndex].name = updatedName;
+                categories[categoryIndex].description = updatedDescription;
+                showCustomAlert(`Categoría "${updatedName}" actualizada.`);
+                console.log("Categorías actualizadas:", categories);
+                // En una aplicación real, aquí enviarías los datos actualizados a tu backend
+            }
+            toggleCategoryEdit(categoryId); // Sale del modo edición
+        }
+
+        /**
+         * Elimina una categoría de la lista.
+         * @param {number} categoryId - El ID de la categoría a eliminar.
+         */
+        function deleteCategory(categoryId) {
+            const categoryToDelete = categories.find(c => c.id === categoryId);
+            if (categoryToDelete && confirm(`¿Estás seguro de que quieres eliminar la categoría "${categoryToDelete.name}"?`)) { // Usar modal personalizado en vez de confirm en app real
+                categories = categories.filter(c => c.id !== categoryId);
+                showCustomAlert(`Categoría "${categoryToDelete.name}" eliminada.`);
+                console.log("Categorías después de eliminar:", categories);
+                renderCategoryList(); // Volver a renderizar la lista
+                // En una aplicación real, aquí enviarías la solicitud de eliminación a tu backend
+            }
+        }
+
+        /**
+         * Muestra un cuadro de alerta personalizado.
+         * @param {string} message - El mensaje a mostrar en la alerta.
+         */
+        function showCustomAlert(message) {
+            const customAlert = document.getElementById('custom-alert');
+            customAlert.textContent = message;
+            customAlert.classList.remove('hidden');
+            customAlert.classList.add('active'); // Activa la animación de entrada
+
+            // Oculta la alerta después de 3 segundos
+            setTimeout(() => {
+                customAlert.classList.remove('active'); // Activa la animación de salida
+                setTimeout(() => {
+                    customAlert.classList.add('hidden'); // Oculta completamente después de la animación
+                }, 300); // Coincide con la duración de la transición CSS
+            }, 3000);
+        }
+    </script>
 @endpush
