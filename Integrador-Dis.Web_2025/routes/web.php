@@ -36,3 +36,7 @@ Route::get('/gestionCursos', function () {
 Route::get('/gestionUsuarios', function () {
     return view('admin.gestionUsuarios', ['nombre' => 'Adminn'] );
 })->name('gestionUsuarios');
+
+Route::get('/gestionRoles', function () {
+    return view('admin.gestionRoles', ['nombre' => 'Adminn'] );
+})->name('gestionRoles');
