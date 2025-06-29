@@ -7,10 +7,13 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/app', function () {
-    return view('estructuras.app', ['nombre' => 'Adminn'] );
+    return view('estructuras.app', ['nombre' => 'Alumno'] );
 });
 Route::get('/inicioAlumno', function () {
-    return view('alumnos.inicioAlumno', ['nombre' => 'Adminn'] );
+    return view('alumnos.inicioAlumno', ['nombre' => 'Alumno'] );
+});
+Route::get('/inicioAdmin', function () {
+    return view('admin.inicioAdmin', ['nombre' => 'Adminn'] );
 });
 // Route::get('/registro', function () {
 //     return view('registro');

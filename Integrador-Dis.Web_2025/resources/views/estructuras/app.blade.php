@@ -10,7 +10,7 @@
     <!-- apilar estilos css para añadir estilos a parte de los establecidos aca -->
     @stack('css')
 </head>
-<body>
+<body class="flex flex-col min-h-screen">
     <header class="bg-gradient-custom-purple shadow-xl p-5 flex flex-col md:flex-row justify-between items-center rounded-b-xl">
         <div class="flex items-center space-x-6 mb-4 md:mb-0">
             <!-- Logo o Nombre de la Institución -->
@@ -21,7 +21,7 @@
 
             <!-- Menú de Navegación -->
             <nav class="hidden md:flex space-x-8">
-                <a href="#" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Home</a>
+                <a href="#" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Inicio</a>
                 <a href="#" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Gestión de Cursos</a>
                 <a href="#" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Gestión de Usuarios</a>
             </nav>
