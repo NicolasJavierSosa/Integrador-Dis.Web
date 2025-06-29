@@ -90,6 +90,8 @@ class RolesAndPermissionSeeder extends Seeder
             ['email' => 'admin@dummy.com'],
             [
                 'name' => 'DummyAdmin',
+                'surname' => 'Test',
+                'gender' => 'Masculino',
                 'password' => bcrypt('admin123'),
                 'role' => 'admin',
                 'dni' => '12345678',
@@ -104,13 +106,15 @@ class RolesAndPermissionSeeder extends Seeder
         $dummyTeacher = User::firstOrCreate(
             ['email' => 'teacher@dummy.com'],
             [
-                'name' => 'DummyTeacher',
-                'password' => bcrypt('teacher123'),
                 'role' => 'teacher',
                 'dni' => '87654321',
-                'phone' => '0987654321',
+                'name' => 'DummyTeacher',
+                'surname' => 'Test',
+                'gender' => 'Masculino',
+                'birth_date' => '1992-02-02',
                 'address' => '456 Teacher Ave',
-                'birth_date' => '1992-02-02'
+                'phone' => '0987654321',
+                'password' => bcrypt('teacher123'),
             ]
         );
         $dummyTeacher->assignRole('teacher');
@@ -120,6 +124,8 @@ class RolesAndPermissionSeeder extends Seeder
             ['email' => 'student@dummy.com'],
             [
                 'name' => 'DummyStudent',
+                'surname' => 'Test',
+                'gender' => 'Femenino',
                 'password' => bcrypt('student123'),
                 'role' => 'student',
                 'dni' => '11223344',

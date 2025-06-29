@@ -37,11 +37,26 @@
     <div class="welcome-text">
         ¡Bienvenido{{ Auth::check() ? ', ' . (Auth::user()->name ?? 'Usuario') : ' invitado' }}!
     </div>
+    @if (session('error'))
+        <p style="color: #ffb3b3; background: #330066; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+            {{ session('error') }}
+        </p>
+    @endif
     <div class="gif-placeholder">
         <img src="https://gifdb.com/images/thumbnail/hand-holding-monkey-spinning-s3tti9y390rs8iud.gif" alt="Bienvenido GIF" style="max-width:100%; max-height:100%;">
     </div>
     <p>
         Aún seguimos trabajando en el proyecto, por favor, vuelve más tarde.
     </p>
+    @if(Auth::check())
+        <form method="POST" action="{{ route('logout') }}" class="d-inline">
+            @csrf
+            <button type="submit" class="btn btn-outline-danger btn-sm">Cerrar Sesión</button>
+        </form>
+    @else
+        <form method="GET" action="{{ route('login') }}" class="d-inline">
+            <button type="submit" class="btn btn-outline-primary btn-sm">Iniciar Sesión</button>
+        </form>
+    @endif
 </body>
 </html>

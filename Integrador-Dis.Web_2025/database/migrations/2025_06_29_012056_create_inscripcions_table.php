@@ -6,8 +6,10 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /*
     public function up(): void
     {
+        
         Schema::create('inscripcions', function (Blueprint $table) {
             $table->id();
 
@@ -31,4 +33,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('inscripcions');
     }
+    */
 };
