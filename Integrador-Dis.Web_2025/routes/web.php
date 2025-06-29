@@ -18,6 +18,9 @@ Route::get('/', function () {
 Route::middleware((['guest']))->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::get('/register', function () {
+        return view('auth.register');
+    })->name('registro');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -33,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('/admin/courses', [AdminController::class, 'courses'])->name('admin.courses');
+        Route::get('/admin/roles', [AdminController::class, 'roles'])->name('admin.roles');
     
     // Rutas para ABM de usuarios
     Route::post('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');

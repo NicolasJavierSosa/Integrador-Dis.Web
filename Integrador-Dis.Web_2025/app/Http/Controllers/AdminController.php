@@ -16,10 +16,12 @@ class AdminController extends Controller
     public function index() {
         // Verifico si el usuario autenticado es un administrador
         if (Auth::user()->role !== 'admin') {
-            abort(403, 'Acesso no autorizado');
-            return view('/dashboard');
+            return redirect()->route('login')->with('error', 'Acceso no autorizado');
         }
-        return view('admin.dashboard');
+
+        $users = User::all();
+
+        return view('admin.dashboard', compact('users'));
     }
 
     public function users() {
@@ -65,7 +67,7 @@ class AdminController extends Controller
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
                 'surname' => 'required|string|max:255',
-                'dni' => 'required|string|unique:users,dni',
+                'dni' => 'required|numeric|digits:8|unique:users,dni',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|string|min:8|confirmed',
                 'gender' => 'nullable|in:M,F,X',
@@ -85,6 +87,12 @@ class AdminController extends Controller
             $newUser->birth_date = $validatedData['birth_date'];
             $newUser->address = $validatedData['address'] ?? null;
             $newUser->phone = $validatedData['phone'] ?? null;
+
+            // Verificar si el rol existe
+            $role = Role::findByName($validatedData['role']);
+            if (!$role) {
+                throw new Exception('El rol especificado no existe');
+            }
             $newUser->role = $validatedData['role'];
 
             $newUser->save();
@@ -142,6 +150,9 @@ class AdminController extends Controller
     public function updateUser(Request $request) {
         // Verifico si el usuario autenticado es un administrador
         if (Auth::user()->role !== 'admin') {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Acceso no autorizado'], 403);
+            }
             return redirect()->back()->with('error', 'Acceso no autorizado');
         }
 
@@ -152,8 +163,9 @@ class AdminController extends Controller
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
                 'surname' => 'required|string|max:255',
-                'dni' => 'required|string|unique:users,dni,' . $user->id,
+                'dni' => 'required|numeric|digits:8|unique:users,dni,' . $user->id,
                 'email' => 'required|email|unique:users,email,' . $user->id,
+                'password' => 'nullable|string|min:8|confirmed',
                 'gender' => 'nullable|in:M,F,X',
                 'birth_date' => 'nullable|date',
                 'address' => 'nullable|string|max:255',
@@ -163,17 +175,54 @@ class AdminController extends Controller
 
             // No permitir cambiar el rol del usuario autenticado
             if ($user->id === Auth::id() && $validatedData['role'] !== Auth::user()->role) {
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'message' => 'No puedes cambiar tu propio rol'], 403);
+                }
                 return redirect()->back()->with('error', 'No puedes cambiar tu propio rol');
+            }
+
+            // Verificar si el rol existe
+            $role = Role::findByName($validatedData['role']);
+            if (!$role) {
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'message' => 'El rol especificado no existe'], 400);
+                }
+                return redirect()->back()->with('error', 'El rol especificado no existe');
+            }
+
+            // Si se proporciona una nueva contraseña, encriptarla
+            if (!empty($validatedData['password'])) {
+                $validatedData['password'] = Hash::make($validatedData['password']);
+            } else {
+                // Si no se proporciona contraseña, no actualizar este campo
+                unset($validatedData['password']);
             }
 
             // Actualizo los datos del usuario
             $user->update($validatedData);
 
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Usuario actualizado correctamente']);
+            }
+            
             return redirect()->route('admin.users')->with('success', 'Usuario actualizado correctamente');
             
         } catch (ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Errores de validación',
+                    'errors' => $e->errors()
+                ], 422);
+            }
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Error al actualizar el usuario: ' . $e->getMessage()
+                ], 500);
+            }
             return redirect()->back()->with('error', 'Error al actualizar el usuario: ' . $e->getMessage());
         }
     }

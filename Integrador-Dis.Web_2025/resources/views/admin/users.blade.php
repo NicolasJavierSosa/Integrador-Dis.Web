@@ -1,303 +1,302 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Gestión de Usuarios</title>
-    <style>
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-        }
-        .alert-success {
-            color: #155724;
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-        .alert-danger {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-        }
-        .error-field {
-            border: 1px solid #dc3545 !important;
-        }
-        .error-message {
-            color: #dc3545;
-            font-size: 0.875em;
-            margin-top: 5px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Gestión de Usuarios</h1>
+@extends('layouts.app')
+@section('tittle', 'AureaCursos - Gestion de Usuarios')
+@push('css')
+    <link rel="stylesheet" href="{{asset('css/gestion.css')}}">
+@endpush
 
-        <!-- Mensajes de éxito y error -->
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
+@section('contenido')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
+    <!-- Mensajes de éxito/error -->
+    @if(session('success'))
+        <div id="success-message" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            <span class="block sm:inline">{{ session('success') }}</span>
+            <button onclick="this.parentElement.style.display='none'" class="float-right text-green-700 hover:text-green-900">&times;</button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div id="error-message" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <span class="block sm:inline">{{ session('error') }}</span>
+            <button onclick="this.parentElement.style.display='none'" class="float-right text-red-700 hover:text-red-900">&times;</button>
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div id="validation-errors" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <ul class="list-disc list-inside">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button onclick="this.parentElement.style.display='none'" class="float-right text-red-700 hover:text-red-900">&times;</button>
+        </div>
+    @endif
+
+    <!-- Errores AJAX -->
+    <div id="ajax-errors" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" style="display: none;">
+        <ul id="ajax-error-list" class="list-disc list-inside"></ul>
+        <button onclick="clearErrors()" class="float-right text-red-700 hover:text-red-900">&times;</button>
+    </div>
+
+    <!-- Éxito AJAX -->
+    <div id="ajax-success" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" style="display: none;">
+        <span id="ajax-success-message"></span>
+        <button onclick="clearSuccess()" class="float-right text-green-700 hover:text-green-900">&times;</button>
+    </div>
+
+    <main class="flex-grow p-8 bg-gray-50">
+        <!-- Formulario de creación de usuarios -->
+        <section id="creation" class="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-200" style="display: none;">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-4xl font-extrabold text-custom-dark-purple">Crear Nuevo Usuario</h2>
+                <button onclick="hideCreateForm()" class="text-red-600 hover:text-red-800 text-xl font-bold">✕</button>
             </div>
-        @endif
-
-        @if(session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
-
-        <!-- Errores de validación generales -->
-        @if($errors->any())
-            <div class="alert alert-danger">
-                <strong>¡Hay errores en el formulario!</strong>
-                <ul style="margin: 10px 0 0 0; padding-left: 20px;">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <!-- Botón para mostrar formulario de creación -->
-        <button onclick="showCreateForm()" class="btn btn-primary">Crear Nuevo Usuario</button>
-
-        <!-- Formulario de creación -->
-        <div id="creation" style="display: none;">
-            <h2>Crear Nuevo Usuario</h2>
             
             <form action="{{ route('admin.users.create') }}" method="POST">
                 @csrf
-                
-                <div>
-                    <label for="create_name">Nombre:</label>
-                    <input type="text" name="name" id="create_name" required>
-                </div>
-                
-                <div>
-                    <label for="create_surname">Apellido:</label>
-                    <input type="text" name="surname" id="create_surname" required>
-                </div>
-                
-                <div>
-                    <label for="create_dni">DNI:</label>
-                    <input type="text" name="dni" id="create_dni" required>
-                </div>
-                
-                <div>
-                    <label for="create_email">Email:</label>
-                    <input type="email" name="email" id="create_email" required>
-                </div>
-                
-                <div>
-                    <label for="create_password">Contraseña:</label>
-                    <input type="password" name="password" id="create_password" required>
-                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+                    <!-- Fila 1 -->
+                    <div>
+                        <label for="name" class="block text-gray-700 text-lg font-semibold mb-2">Nombre/s:</label>
+                        <input type="text" id="name" name="name" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="Ej: Juan" required>
+                    </div>
+                    <div>
+                        <label for="surname" class="block text-gray-700 text-lg font-semibold mb-2">Apellido/s:</label>
+                        <input type="text" id="surname" name="surname" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="Ej: Pérez" required>
+                    </div>
+                    <div>
+                        <label for="dni" class="block text-gray-700 text-lg font-semibold mb-2">DNI:</label>
+                        <input type="number" id="dni" name="dni" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="12345678" required min="10000000" max="99999999">
+                    </div>
 
-                <div>
-                    <label for="create_password_confirmation">Confirmar Contraseña:</label>
-                    <input type="password" name="password_confirmation" id="create_password_confirmation" required>
+                    <!-- Fila 2 -->
+                    <div>
+                        <label for="gender" class="block text-gray-700 text-lg font-semibold mb-2">Género:</label>
+                        <select id="gender" name="gender" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
+                            <option value="">Selecciona</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                            <option value="X">Otro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="birth_date" class="block text-gray-700 text-lg font-semibold mb-2">Fecha de nacimiento:</label>
+                        <input type="date" id="birth_date" name="birth_date" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
+                    </div>
+                    <div>
+                        <label for="address" class="block text-gray-700 text-lg font-semibold mb-2">Ciudad:</label>
+                        <input list="ciudades" id="address" name="address"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition duration-200"
+                                placeholder="Escribí tu ciudad">
+                        <datalist id="ciudades">
+                            <option value="Buenos Aires">
+                            <option value="Córdoba">
+                            <option value="Rosario">
+                            <option value="Mendoza">
+                            <option value="La Plata">
+                            <option value="Mar del Plata">
+                            <option value="San Miguel de Tucumán">
+                            <option value="Salta">
+                            <option value="Santa Fe">
+                            <option value="Neuquén">
+                            <option value="Posadas">
+                        </datalist>
+                    </div>
+
+                    <!-- Fila 3 -->
+                    <div>
+                        <label for="email" class="block text-gray-700 text-lg font-semibold mb-2">Correo:</label>
+                        <input type="email" id="email" name="email" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="Ej: usuario@example.com" required>
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-gray-700 text-lg font-semibold mb-2">Teléfono:</label>
+                        <input type="tel" id="phone" name="phone" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="Ej: +5491112345678">
+                    </div>
+                    <div>
+                        <label for="role" class="block text-gray-700 text-lg font-semibold mb-2">Rol:</label>
+                        <select id="role" name="role" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" required>
+                            <option value="">Selecciona un rol</option>
+                            <option value="admin">Administrador</option>
+                            <option value="teacher">Docente</option>
+                            <option value="student">Estudiante</option>
+                        </select>
+                    </div>
+
+                    <!-- Fila 4 - Campos de contraseña -->
+                    <div>
+                        <label for="password" class="block text-gray-700 text-lg font-semibold mb-2">Contraseña:</label>
+                        <input type="password" id="password" name="password" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="********" required>
+                    </div>
+                    <div>
+                        <label for="password_confirmation" class="block text-gray-700 text-lg font-semibold mb-2">Confirmar Contraseña:</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="********" required>
+                    </div>
                 </div>
                 
-                <div>
-                    <label for="create_gender">Género:</label>
-                    <select name="gender" id="create_gender">
-                        <option value="">Seleccione</option>
-                        <option value="M">Masculino</option>
-                        <option value="F">Femenino</option>
-                        <option value="X">Otro</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label for="create_birth_date">Fecha de Nacimiento:</label>
-                    <input type="date" name="birth_date" id="create_birth_date">
-                </div>
-                
-                <div>
-                    <label for="create_address">Dirección:</label>
-                    <input type="text" name="address" id="create_address">
-                </div>
-                
-                <div>
-                    <label for="create_phone">Teléfono:</label>
-                    <input type="text" name="phone" id="create_phone">
-                </div>
-                
-                <div>
-                    <label for="create_role">Rol:</label>
-                    <select name="role" id="create_role" required>
-                        <option value="">Seleccione un rol</option>
-                        @foreach($roles as $role)
-                            <option value="{{ $role->name }}">{{ $role->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                
-                <div>
-                    <button type="submit" class="btn btn-success">Crear Usuario</button>
-                    <button type="button" onclick="hideCreateForm()" class="btn btn-secondary">Cancelar</button>
+                <!-- Botones de acción -->
+                <div class="mt-8 flex justify-end space-x-4">
+                    <button type="button" onclick="hideCreateForm()" class="bg-red-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-red-700 transition-all transform hover-scale-105">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="bg-emerald-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-emerald-600 transition-all transform hover-scale-105">
+                        Guardar
+                    </button>
                 </div>
             </form>
+        </section>
+
+        <!-- Formulario de edición de usuarios -->
+        <section id="edition" class="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-200" style="display: none;">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-4xl font-extrabold text-custom-dark-purple">Editar Usuario</h2>
+                <button onclick="cancelEdit()" class="text-red-600 hover:text-red-800 text-xl font-bold">✕</button>
+            </div>
+            
+            <form id="edition-form" action="{{ route('admin.users.update') }}" method="POST">
+                @csrf
+                @method('PUT')
+                <input type="hidden" id="user_id" name="user_id">
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+                    <!-- Fila 1 formulario de edición -->
+                    <div>
+                        <label for="edit_name" class="block text-gray-700 text-lg font-semibold mb-2">Nombre/s:</label>
+                        <input type="text" id="edit_name" name="name" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="Ej: Juan" required>
+                    </div>
+                    <div>
+                        <label for="edit_surname" class="block text-gray-700 text-lg font-semibold mb-2">Apellido/s:</label>
+                        <input type="text" id="edit_surname" name="surname" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="Ej: Pérez" required>
+                    </div>
+                    <div>
+                        <label for="edit_dni" class="block text-gray-700 text-lg font-semibold mb-2">DNI:</label>
+                        <input type="number" id="edit_dni" name="dni" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="12345678" required min="10000000" max="99999999">
+                    </div>
+
+                    <!-- Fila 2 -->
+                    <div>
+                        <label for="edit_gender" class="block text-gray-700 text-lg font-semibold mb-2">Género:</label>
+                        <select id="edit_gender" name="gender" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
+                            <option value="">Selecciona</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                            <option value="X">Otro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit_birth_date" class="block text-gray-700 text-lg font-semibold mb-2">Fecha de nacimiento:</label>
+                        <input type="date" id="edit_birth_date" name="birth_date" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
+                    </div>
+                    <div>
+                        <label for="edit_address" class="block text-gray-700 text-lg font-semibold mb-2">Ciudad:</label>
+                        <input list="edit_ciudades" id="edit_address" name="address"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition duration-200"
+                                placeholder="Escribí tu ciudad">
+                        <datalist id="edit_ciudades">
+                            <option value="Buenos Aires">
+                            <option value="Córdoba">
+                            <option value="Rosario">
+                            <option value="Mendoza">
+                            <option value="La Plata">
+                            <option value="Mar del Plata">
+                            <option value="San Miguel de Tucumán">
+                            <option value="Salta">
+                            <option value="Santa Fe">
+                            <option value="Neuquén">
+                            <option value="Posadas">
+                        </datalist>
+                    </div>
+
+                    <!-- Fila 3 -->
+                    <div>
+                        <label for="edit_email" class="block text-gray-700 text-lg font-semibold mb-2">Correo:</label>
+                        <input type="email" id="edit_email" name="email" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="Ej: usuario@example.com" required>
+                    </div>
+                    <div>
+                        <label for="edit_phone" class="block text-gray-700 text-lg font-semibold mb-2">Teléfono:</label>
+                        <input type="tel" id="edit_phone" name="phone" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="Ej: +5491112345678">
+                    </div>
+                    <div>
+                        <label for="edit_role" class="block text-gray-700 text-lg font-semibold mb-2">Rol:</label>
+                        <select id="edit_role" name="role" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" required>
+                            <option value="">Selecciona un rol</option>
+                            <option value="admin">Administrador</option>
+                            <option value="teacher">Docente</option>
+                            <option value="student">Estudiante</option>
+                        </select>
+                    </div>
+
+                    <!-- Fila 4 - Campos de contraseña -->
+                    <div>
+                        <label for="edit_password" class="block text-gray-700 text-lg font-semibold mb-2">Nueva Contraseña (opcional):</label>
+                        <input type="password" id="edit_password" name="password" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="Dejar vacío para mantener actual">
+                    </div>
+                    <div>
+                        <label for="edit_password_confirmation" class="block text-gray-700 text-lg font-semibold mb-2">Confirmar Nueva Contraseña:</label>
+                        <input type="password" id="edit_password_confirmation" name="password_confirmation" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="Confirmar nueva contraseña">
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-end space-x-4">
+                    <button type="button" onclick="cancelEdit()" class="bg-red-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-red-700 transition-all transform hover-scale-105">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="bg-emerald-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-emerald-600 transition-all transform hover-scale-105">
+                        Actualizar Usuario
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Botón agregar usuario -->
+        <div class="mb-8 text-center">
+            <button onclick="showCreateForm()" class="bg-purple-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-purple-700 transition-all transform hover:scale-105">
+                Agregar Nuevo Usuario
+            </button>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Rol</th>
-                    <th>DNI</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Genero</th>
-                    <th>Fecha de Nacimiento</th>
-                    <th>Email</th>
-                    <th>Ciudad</th>
-                    <th>Teléfono</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($users as $user)
-                    <tr>
-                        <td>{{ $user->id }}</td>
-                        <td>{{ $user->role ?? 'Usuario'}}</td>
-                        <td>{{ $user->dni }}</td>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->surname }}</td>
-                        <td>{{ $user->gender }}</td>
-                        <td>{{ $user->birth_date }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>{{ $user->address }}</td>
-                        <td>{{ $user->phone }}</td>
-                        <td>
-                            <button onclick="editUser({{ $user->id }})" class="btn btn-primary">Editar</button>
-                            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="11" class="text-center">No hay usuarios registrados</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-    
-    <div id="edition" style="display: none;">
-        <h2>Edición de Usuarios</h2>
-        
-        <!-- Div para mostrar errores AJAX -->
-        <div id="ajax-errors" class="alert alert-danger" style="display: none;">
-            <ul id="ajax-error-list"></ul>
-        </div>
+        <!-- Usuarios registrados -->
+        <section class="bg-white rounded-xl shadow-lg p-8 border border-gray-200 mt-8">
+            <h2 class="text-3xl font-extrabold text-custom-dark-purple mb-6">Usuarios registrados:</h2>
+            <div class="w-full overflow-x-auto">
+                <table id="registeredUsersTable" class="min-w-full bg-white rounded-lg shadow-md">
+                    <thead>
+                        <tr class="bg-custom-lilac text-custom-white">
+                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider rounded-tl-lg">Nombre Completo</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">DNI</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Correo</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Rol/es</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider rounded-tr-lg">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($users as $user)
+                        <tr class="border-b border-gray-200 hover:bg-gray-50 transition-all">
+                            <td class="py-3 px-4 text-gray-800">{{ $user->name }} {{ $user->surname }}</td>
+                            <td class="py-3 px-4 text-gray-800">{{ $user->dni }}</td>
+                            <td class="py-3 px-4 text-gray-800">{{ $user->email }}</td>
+                            <td class="py-3 px-4 text-gray-800">{{ ucfirst($user->role) }}</td>
+                            <td class="py-3 px-4">
+                                <button onclick="editUser('{{ $user->id }}')" class="text-custom-purple hover:text-custom-dark-purple mr-3">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}" class="inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+@endsection
 
-        <form id="edition-form" action="{{ route('admin.users.update') }}" method="POST">
-            @csrf
-            @method('PUT')
-            <input type="hidden" name="user_id" id="user_id">
-            
-            <div>
-                <label for="name">Nombre:</label>
-                <input type="text" name="name" id="name" class="{{ $errors->has('name') ? 'error-field' : '' }}" value="{{ old('name') }}" required>
-                @error('name')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            
-            <div>
-                <label for="surname">Apellido:</label>
-                <input type="text" name="surname" id="surname" class="{{ $errors->has('surname') ? 'error-field' : '' }}" value="{{ old('surname') }}" required>
-                @error('surname')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            
-            <div>
-                <label for="dni">DNI:</label>
-                <input type="text" name="dni" id="dni" class="{{ $errors->has('dni') ? 'error-field' : '' }}" value="{{ old('dni') }}" required>
-                @error('dni')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            
-            <div>
-                <label for="email">Email:</label>
-                <input type="email" name="email" id="email" class="{{ $errors->has('email') ? 'error-field' : '' }}" value="{{ old('email') }}" required>
-                @error('email')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            
-            <div>
-                <label for="gender">Género:</label>
-                <select name="gender" id="gender" class="{{ $errors->has('gender') ? 'error-field' : '' }}">
-                    <option value="">Seleccione</option>
-                    <option value="M" {{ old('gender') == 'M' ? 'selected' : '' }}>Masculino</option>
-                    <option value="F" {{ old('gender') == 'F' ? 'selected' : '' }}>Femenino</option>
-                    <option value="O" {{ old('gender') == 'X' ? 'selected' : '' }}>Otro</option>
-                </select>
-                @error('gender')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            
-            <div>
-                <label for="birth_date">Fecha de Nacimiento:</label>
-                <input type="date" name="birth_date" id="birth_date" class="{{ $errors->has('birth_date') ? 'error-field' : '' }}" value="{{ old('birth_date') }}">
-                @error('birth_date')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            
-            <div>
-                <label for="address">Dirección:</label>
-                <input type="text" name="address" id="address" class="{{ $errors->has('address') ? 'error-field' : '' }}" value="{{ old('address') }}">
-                @error('address')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            
-            <div>
-                <label for="phone">Teléfono:</label>
-                <input type="text" name="phone" id="phone" class="{{ $errors->has('phone') ? 'error-field' : '' }}" value="{{ old('phone') }}">
-                @error('phone')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            
-            <div id="role_select">
-                <label for="role">Rol:</label>
-                <select name="role" id="role" class="{{ $errors->has('role') ? 'error-field' : '' }}">
-                    <option value="">Seleccione un rol</option>
-                    @foreach($roles as $role)
-                        <option value="{{ $role->name }}" {{ old('role') == $role->name ? 'selected' : '' }}>{{ $role->name }}</option>
-                    @endforeach
-                </select>
-                @error('role')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>         
-            <div>
-                <button type="submit" class="btn btn-success">Actualizar Usuario</button>
-                <button type="button" onclick="cancelEdit()" class="btn btn-secondary">Cancelar</button>
-            </div>
-        </form>
-    </div>
-
-    <script src="{{ asset('js/admin/scripts.js') }}"></script>
-    
-    <script>
-        // Mostrar formulario de edición si hay errores de validación
-        @if($errors->any())
-            document.getElementById('edition').style.display = 'block';
-        @endif
-    </script>
-</body>
-</html>
+@push('scripts')
+    <script src="{{asset('js/admin/scripts.js')}}"></script>
+@endpush

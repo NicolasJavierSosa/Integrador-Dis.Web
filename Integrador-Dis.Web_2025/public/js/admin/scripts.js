@@ -1,18 +1,14 @@
 function fillFormFields(user) {
     const fields = ['role', 'dni', 'name', 'surname', 'gender', 'birth_date', 'email', 'address', 'phone'];
     fields.forEach(field => {
-        const el = document.getElementById(field);
+        const el = document.getElementById(`edit_${field}`);
         if (el) el.value = user[field] || '';
     });
 }
 
-function setButtonText(formId, text) {
-    const btn = document.querySelector(`#${formId} form button[type="submit"]`);
-    if (btn) btn.textContent = text;
-}
-
 function editUser(userId) {
     clearErrors();
+    clearSuccess();
     fetch(`/admin/users/${userId}/edit`)
         .then(r => r.json())
         .then(data => {
@@ -22,7 +18,6 @@ function editUser(userId) {
                 const edition = document.getElementById('edition');
                 edition.style.display = 'block';
                 edition.scrollIntoView({ behavior: 'smooth' });
-                setButtonText('edition', 'Actualizar Usuario');
             } else {
                 showAjaxError([data.message]);
             }
@@ -37,8 +32,8 @@ function cancelEdit() {
     document.getElementById('edition-form').reset();
     document.getElementById('user_id').value = '';
     clearErrors();
+    clearSuccess();
     document.getElementById('edition').style.display = 'none';
-    setButtonText('edition', 'Crear Usuario');
 }
 
 function showAjaxError(errors) {
@@ -54,14 +49,26 @@ function showAjaxError(errors) {
     errorDiv.scrollIntoView({ behavior: 'smooth' });
 }
 
+function showAjaxSuccess(message) {
+    const successDiv = document.getElementById('ajax-success');
+    const messageSpan = document.getElementById('ajax-success-message');
+    messageSpan.textContent = message;
+    successDiv.style.display = 'block';
+    successDiv.scrollIntoView({ behavior: 'smooth' });
+}
+
 function clearErrors() {
     document.getElementById('ajax-errors').style.display = 'none';
     document.querySelectorAll('.error-field').forEach(f => f.classList.remove('error-field'));
-    document.querySelectorAll('.error-message').forEach(m => m.style.display = 'none');
+}
+
+function clearSuccess() {
+    document.getElementById('ajax-success').style.display = 'none';
 }
 
 function showCreateForm() {
     clearErrors();
+    clearSuccess();
     const creation = document.getElementById('creation');
     creation.style.display = 'block';
     creation.scrollIntoView({ behavior: 'smooth' });
@@ -71,6 +78,7 @@ function hideCreateForm() {
     document.getElementById('creation').style.display = 'none';
     document.querySelector('#creation form').reset();
     clearErrors();
+    clearSuccess();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -90,7 +98,8 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    location.reload();
+                    showAjaxSuccess(data.message);
+                    setTimeout(() => location.reload(), 1500);
                 } else {
                     data.errors ? showValidationErrors(data.errors) : showAjaxError([data.message]);
                 }
