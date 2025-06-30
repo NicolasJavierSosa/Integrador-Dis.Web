@@ -18,24 +18,29 @@ class AuthController extends Controller
     }
 
     public function login(Request $request) {
-        $loginData = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-        if (Auth::attempt($loginData)) {
-            $request->session()->regenerate();
-            if (Auth::user()->role === 'admin') {
-                return redirect()->route('dashboard');
-            }
-            else {
-                return redirect()->route('welcome');
-            }
+    $loginData = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|string',
+    ]);
+
+    if (Auth::attempt($loginData)) {
+        $request->session()->regenerate();
+
+        if (Auth::user()->role === 'admin') {
+            // Admins SIEMPRE al dashboard de admin
+            return redirect()->route('dashboard');
         } else {
-            return back()->withErrors([
-                'email' => 'El usuario o la contraseña son incorrectos.',
-            ]);
+            // Usuarios normales => volver a la URL protegida que pidió
+            return redirect()->intended(route('welcome'));
         }
+
+    } else {
+        return back()->withErrors([
+            'email' => 'El usuario o la contraseña son incorrectos.',
+        ]);
     }
+}
+
 
     public function logout(Request $request) {
         if (Auth::check()) {

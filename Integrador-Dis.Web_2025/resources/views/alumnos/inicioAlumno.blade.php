@@ -11,6 +11,23 @@
 @section('contenido')
     <main class="flex-grow p-8 bg-gray-50">
         <!-- Sección de Presentación -->
+         @if (session('success'))
+            <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg text-center">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if (session('info'))
+            <div class="mb-6 p-4 bg-blue-100 border border-blue-400 text-blue-700 rounded-lg text-center">
+                {{ session('info') }}
+            </div>
+        @endif
         <section class="mb-10 p-6 bg-purple-100 rounded-lg shadow-inner">
             <h1 class="text-4xl font-extrabold text-purple-800 mb-4 text-center">¡Bienvenido a Instituto XXX!</h1>
             <p class="text-lg text-purple-700 leading-relaxed text-center max-w-3xl mx-auto">

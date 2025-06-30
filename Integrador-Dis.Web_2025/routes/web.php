@@ -24,7 +24,9 @@ Route::get('/inicioAlumno', [CursoController::class, 'index'])
      ->name('curso.inicio');
 
 Route::post('/curso/{codigo}/inscribirse', [InscripcionController::class, 'inscribir'])
-     ->name('curso.inscribirse');
+    ->middleware('auth')
+    ->name('curso.inscribirse');
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/misCursos', [MisCursosController::class, 'misCursos'])->name('alumno.misCursos');

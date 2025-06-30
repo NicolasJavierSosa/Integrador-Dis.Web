@@ -12,9 +12,9 @@ class InscripcionController extends Controller
     {
         // Verificar autenticación
         if (!Auth::check()) {
-            return redirect()->route('login')
-                   ->with('error', 'Debes iniciar sesión para inscribirte.');
-        }
+    return redirect()->route('login')
+           ->with('error', 'Debes iniciar sesión para inscribirte.');
+}
 
         try {
             $curso = Curso::findOrFail($codigo);
