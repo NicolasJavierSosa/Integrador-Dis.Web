@@ -30,7 +30,6 @@ class AuthController extends Controller
             return redirect()->route('dashboard');
         }
 
-        // 🗝️ Este hace la magia:
         return redirect()->intended(route('curso.inicio'));
     } else {
         return back()->withErrors([

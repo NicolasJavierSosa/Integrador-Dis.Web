@@ -12,10 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cursos', function (Blueprint $table) {
-            // Clave primaria (coincide con el modelo)
+            // Clave primaria
             $table->integer('codigo')->autoIncrement()->primary();
-            
-            // Campos regulares
+
             $table->string('nombre');
             $table->text('descripcion')->nullable();
             $table->date('fecha_inicio');
@@ -24,16 +23,14 @@ return new class extends Migration
             $table->integer('cupo');
             $table->decimal('costo_inscripcion', 8, 2);
             $table->decimal('costo_mensual', 8, 2);
-            $table->time('horario');
-            
-            // Campos para las relaciones (pivot)
-            $table->timestamps();
-        });
 
-        // Si necesitas los campos adicionales comentados en el modelo
-        Schema::table('cursos', function (Blueprint $table) {
-            $table->string('modalidad')->nullable()->after('horario');
-            $table->string('dia')->nullable()->after('modalidad');
+            // 👇 CAMBIO: horario y dias como JSON
+            $table->json('horario');
+            $table->json('dias');
+
+            $table->string('modalidad');
+
+            $table->timestamps();
         });
     }
 

@@ -17,23 +17,26 @@ class Curso extends Model
     //modalidad
     //dia
     protected $fillable = [
-        'nombre',
-        'descripcion',
-        'fecha_inicio',
-        'fecha_fin',
-        'fecha_limite_inscripcion',
-        'cupo',
-        'costo_inscripcion',
-        'costo_mensual',
-        'horario',
-    ];
+    'nombre',
+    'descripcion',
+    'fecha_inicio',
+    'fecha_fin',
+    'fecha_limite_inscripcion',
+    'cupo',
+    'costo_inscripcion',
+    'costo_mensual',
+    'horario',
+    'modalidad',
+    'dias',
+];
 
     protected $casts = [
-        'fecha_inicio',
-        'fecha_fin',
-        'fecha_limite_inscripcion',
-        'horario',
-    ];
+    'fecha_inicio' => 'date',
+    'fecha_fin' => 'date',
+    'fecha_limite_inscripcion' => 'date',
+    'horario' => 'array',
+    'dias' => 'array',
+];
 
     public function usuarios()
 {
