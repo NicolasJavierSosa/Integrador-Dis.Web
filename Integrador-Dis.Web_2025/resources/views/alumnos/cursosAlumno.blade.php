@@ -10,6 +10,8 @@
     <main class="max-w-6xl mx-auto bg-white p-8 rounded-xl shadow-2xl">
         <h1 class="text-3xl font-bold text-center text-purple-800 mb-8">Mis Cursos</h1>
 
+        <div id="messageContainer" class="mt-4 p-3 rounded-lg text-center font-medium hidden"></div>
+
         <section id="myCoursesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Los cursos se cargarán aquí con JavaScript -->
         </section>
@@ -22,7 +24,7 @@
     <script src="{{ asset('js/scripts.js') }}"></script>
     <script>
         // Datos simulados de los cursos del alumno
-        const studentCourses = [
+        let studentCourses = [ // Cambiado a 'let' para permitir la modificación
             {
                 id: 'course1',
                 title: 'Desarrollo Web Full Stack',
@@ -71,6 +73,33 @@
 
         const myCoursesContainer = document.getElementById('myCoursesContainer');
         const noCoursesMessage = document.getElementById('noCoursesMessage');
+        const messageContainer = document.getElementById('messageContainer'); // Referencia al contenedor de mensajes
+
+        // Función para mostrar mensajes (éxito o error)
+        function showMessage(msg, type) {
+            messageContainer.textContent = msg;
+            messageContainer.classList.remove('hidden', 'bg-green-100', 'text-green-700', 'bg-red-100', 'text-red-700');
+            if (type === 'success') {
+                messageContainer.classList.add('bg-green-100', 'text-green-700');
+            } else if (type === 'error') {
+                messageContainer.classList.add('bg-red-100', 'text-red-700');
+            }
+            setTimeout(() => {
+                messageContainer.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Función para dar de baja un curso
+        function unsubscribeCourse(courseId) {
+            const initialLength = studentCourses.length;
+            studentCourses = studentCourses.filter(course => course.id !== courseId);
+            if (studentCourses.length < initialLength) {
+                showMessage('Curso dado de baja exitosamente.', 'success');
+                renderStudentCourses(); // Volver a renderizar la lista de cursos
+            } else {
+                showMessage('Error al dar de baja el curso.', 'error');
+            }
+        }
 
         // Función para renderizar los cursos del alumno
         function renderStudentCourses() {
@@ -82,29 +111,34 @@
                 noCoursesMessage.classList.add('hidden');
                 studentCourses.forEach(course => {
                     const courseCard = document.createElement('div');
-                    // Cambiado de bg-purple-50 a bg-purple-700 para el color oscuro
-                    // Cambiado border-purple-200 a border-purple-600 para un borde más oscuro
                     courseCard.className = 'bg-purple-700 p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-purple-600';
                     
                     courseCard.innerHTML = `
                         <img src="${course.imageUrl}" alt="Imagen del curso ${course.title}" class="w-full h-40 object-cover rounded-md mb-4">
-                        <h3 class="text-xl font-semibold text-white mb-2">${course.title}</h3> <!-- Texto blanco para contraste -->
-                        <p class="text-purple-100 text-sm mb-3">${course.description}</p> <!-- Tono más claro de violeta para descripción -->
+                        <h3 class="text-xl font-semibold text-white mb-2">${course.title}</h3>
+                        <p class="text-purple-100 text-sm mb-3">${course.description}</p>
                         <p class="text-white text-sm mb-2">Instructor: <span class="font-medium">${course.instructor}</span></p>
                         <p class="text-white text-sm mb-2">Inicio: <span class="font-medium">${course.startDate}</span></p>
                         <p class="text-white text-sm mb-2">Fin: <span class="font-medium">${course.endDate}</span></p>
                         <p class="text-white text-sm mb-2">Días y Horarios: <span class="font-medium">${course.daysAndTimes}</span></p>
                         <p class="text-white text-sm mb-4">Modalidad: <span class="font-medium">${course.modality}</span></p>
                         
-                        <!-- La sección de progreso ha sido eliminada -->
-
                         <button
-                            class="w-full bg-purple-800 text-white py-2 rounded-lg font-semibold hover:bg-purple-900 transition duration-300 ease-in-out transform hover:scale-105 shadow-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50"
+                            data-id="${course.id}"
+                            class="unsubscribe-btn w-full bg-red-600 text-white py-2 rounded-lg font-semibold hover:bg-red-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 mt-2"
                         >
-                            Ir al Curso
+                            Dar de Baja Curso
                         </button>
                     `;
                     myCoursesContainer.appendChild(courseCard);
+                });
+
+                // Añadir event listeners a los botones de "Dar de Baja" después de renderizar
+                document.querySelectorAll('.unsubscribe-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const courseId = e.currentTarget.dataset.id;
+                        unsubscribeCourse(courseId);
+                    });
                 });
             }
         }
