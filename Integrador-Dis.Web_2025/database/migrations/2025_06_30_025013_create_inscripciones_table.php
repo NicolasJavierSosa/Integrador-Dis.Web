@@ -22,7 +22,7 @@ return new class extends Migration {
                   ->onDelete('cascade');
             
             // Campos adicionales
-            $table->timestamp('inscripcion_date')->useCurrent();
+            $table->timestamp('fecha_inscripcion')->useCurrent();
             $table->timestamps();
             
             // Índices para mejor performance

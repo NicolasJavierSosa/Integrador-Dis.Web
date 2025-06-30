@@ -25,4 +25,6 @@ class InicioAlumnoController extends Controller
 
         return redirect()->back()->with('success', 'Te has inscrito correctamente.');
     }
+
+    
 }

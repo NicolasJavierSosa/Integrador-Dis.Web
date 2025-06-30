@@ -22,23 +22,47 @@
             <!-- Menú de Navegación -->
             <nav class="hidden md:flex space-x-8">
                 <a href="#" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg bg-gradient-custom-lilac transform hover-scale-105">Inicio</a>
-                <a href="#" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Cursos</a>
+                <a href="#" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Mis Cursos</a>
             </nav>
         </div>
 
-        <!-- Botones de Sign In / Sign Up -->
+        <!-- Información de Usuario/Administrador o Botones de acceso -->
         <div class="flex items-center space-x-4">
-            <button id="inicioSesion" onclick="window.location='{{ route('login') }}'" class="bg-custom-lilac text-custom-white px-5 py-2 rounded-full font-semibold shadow-md hover:bg-gradient-custom-lilac transition-all transform hover-scale-105">
-                Iniciar Sesión
-            </button>
-            <button id="registro" onclick="window.location='{{ route('registro') }}'" class="bg-custom-white text-custom-lilac px-5 py-2 rounded-full font-semibold shadow-md hover:bg-gray-200 transition-all transform hover-scale-105">
-                Registrarse
-            </button>
+            @auth
+                <span class="text-custom-white text-lg font-medium hidden sm:block">
+                    Usuario: {{ Auth::user()->name }}
+                </span>
+                <div class="relative group">
+                    <button class="flex items-center focus:outline-none rounded-full border-2 border-custom-white p-1 transform transition-all hover-scale-105" onclick="toggleDropdown(event)">
+                        <img class="h-10 w-10 rounded-full" src="" alt="User Avatar">
+                    </button>
+                    <!-- Dropdown -->
+                    <div id="userDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl py-2 z-20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform scale-95 group-hover:scale-100 origin-top-right">
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-custom-lilac hover:text-custom-white rounded-md mx-2 my-1 transition-all">Perfil</a>
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-custom-lilac hover:text-custom-white rounded-md mx-2 my-1 transition-all">Configuración</a>
+                        <div class="border-t border-gray-200 my-1"></div>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100 rounded-md mx-2 my-1 transition-all">Cerrar Sesión</button>
+                        </form>
+                    </div>
+                </div>
+            @endauth
+
+            @guest
+                <button id="inicioSesion" onclick="window.location='{{ route('login') }}'" class="bg-custom-lilac text-custom-white px-5 py-2 rounded-full font-semibold shadow-md hover:bg-gradient-custom-lilac transition-all transform hover-scale-105">
+                    Iniciar Sesión
+                </button>
+                <button id="registro" onclick="window.location='{{ route('registro') }}'" class="bg-custom-white text-custom-lilac px-5 py-2 rounded-full font-semibold shadow-md hover:bg-gray-200 transition-all transform hover-scale-105">
+                    Registrarse
+                </button>
+            @endguest
         </div>
     </header>
 
+    <main>
         @yield('contenido')
-
+    </main>
 
     <footer class="bg-gradient-custom-purple text-custom-white p-8 mt-12 rounded-t-xl shadow-xl">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-start md:items-center">
@@ -86,44 +110,5 @@
     </footer>
 
     @stack('scripts')
-    @if(session('success'))
-<div class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center animate-fade-in">
-    <span>{{ session('success') }}</span>
-    <button onclick="this.parentElement.remove()" class="ml-4 text-xl">&times;</button>
-</div>
-@endif
-
-@if(session('error'))
-<div class="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center animate-fade-in">
-    <span>{{ session('error') }}</span>
-    <button onclick="this.parentElement.remove()" class="ml-4 text-xl">&times;</button>
-</div>
-@endif
-
-@if(session('info'))
-<div class="fixed bottom-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center animate-fade-in">
-    <span>{{ session('info') }}</span>
-    <button onclick="this.parentElement.remove()" class="ml-4 text-xl">&times;</button>
-</div>
-@endif
-
-<style>
-    .animate-fade-in {
-        animation: fadeIn 0.3s ease-in-out;
-    }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>
-
-<script>
-    // Ocultar automáticamente después de 5 segundos
-    document.querySelectorAll('[class*="fixed bottom-4"]').forEach(alert => {
-        setTimeout(() => {
-            alert.remove();
-        }, 5000);
-    });
-</script>
 </body>
 </html>

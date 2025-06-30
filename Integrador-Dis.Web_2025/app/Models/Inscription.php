@@ -21,7 +21,7 @@ public function curso() {
         'status',
         'amount_id',
         'notes',
-        'inscripcion_date'
+        'fecha_inscripcion'
     ];
 
     protected $casts = [
