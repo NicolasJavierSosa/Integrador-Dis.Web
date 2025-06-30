@@ -10,21 +10,37 @@ class InscripcionController extends Controller
 {
     public function inscribir(Request $request, $codigo)
     {
+        // Verificar autenticación
         if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Debes iniciar sesión para inscribirte.');
+            return redirect()->route('login')
+                   ->with('error', 'Debes iniciar sesión para inscribirte.');
         }
 
-        $curso = Curso::findOrFail($codigo);
-        $user = Auth::user();
+        try {
+            $curso = Curso::findOrFail($codigo);
+            $user = Auth::user();
 
-        if (!$user->cursos->contains($codigo)) {
+            // Verificar si ya está inscrito
+            if ($user->cursos()->where('codigo', $codigo)->exists()) {
+                return redirect()->back()
+                       ->with('info', 'Ya estás inscrito en este curso.');
+            }
+
+            // Realizar la inscripción
             $user->cursos()->attach($codigo, [
-    'created_at' => now(),
-    'updated_at' => now(),
-]);
+                'fecha_inscripcion' => now(),  // Usar el nombre correcto del campo
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
 
+            // Redireccionar con mensaje de éxito
+            return redirect()->back()
+                   ->with('success', '¡Inscripción exitosa! Ahora estás registrado en '.$curso->nombre);
+
+        } catch (\Exception $e) {
+            // Manejo de errores
+            return redirect()->back()
+                   ->with('error', 'Ocurrió un error: '.$e->getMessage());
         }
-
-        return redirect()->back()->with('success', 'Te has inscrito correctamente.');
     }
 }

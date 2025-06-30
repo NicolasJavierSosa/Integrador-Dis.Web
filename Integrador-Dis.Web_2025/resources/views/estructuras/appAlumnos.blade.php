@@ -86,5 +86,44 @@
     </footer>
 
     @stack('scripts')
+    @if(session('success'))
+<div class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center animate-fade-in">
+    <span>{{ session('success') }}</span>
+    <button onclick="this.parentElement.remove()" class="ml-4 text-xl">&times;</button>
+</div>
+@endif
+
+@if(session('error'))
+<div class="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center animate-fade-in">
+    <span>{{ session('error') }}</span>
+    <button onclick="this.parentElement.remove()" class="ml-4 text-xl">&times;</button>
+</div>
+@endif
+
+@if(session('info'))
+<div class="fixed bottom-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center animate-fade-in">
+    <span>{{ session('info') }}</span>
+    <button onclick="this.parentElement.remove()" class="ml-4 text-xl">&times;</button>
+</div>
+@endif
+
+<style>
+    .animate-fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script>
+    // Ocultar automáticamente después de 5 segundos
+    document.querySelectorAll('[class*="fixed bottom-4"]').forEach(alert => {
+        setTimeout(() => {
+            alert.remove();
+        }, 5000);
+    });
+</script>
 </body>
 </html>

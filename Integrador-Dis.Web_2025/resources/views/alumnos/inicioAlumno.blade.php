@@ -57,13 +57,12 @@
     </div>
   
     @auth
-      <form id="inscripcion-form" method="POST">
-        @csrf
-        <button type="submit"
-                class="btn-primary w-full py-2 rounded">
+      <form id="inscripcion-form" method="POST" action="{{ route('curso.inscribirse', ['codigo' => '__CODIGO__']) }}">
+      @csrf
+      <button type="submit" class="btn-primary w-full py-2 rounded">
           Inscribirse ahora
-        </button>
-      </form>
+      </button>
+  </form>
     @else
       <a href="{{ route('login') }}"
          class="btn-primary block text-center py-2 rounded">
@@ -92,7 +91,7 @@ function openModal(card) {
   // Ajustar la URL del formulario de inscripción
   @auth
     const form = document.getElementById('inscripcion-form');
-    form.action = `/curso/${card.dataset.codigo}/inscribirse`;
+    form.action = form.action.replace('__CODIGO__', card.dataset.codigo);
   @endauth
 
   // Mostrar el modal

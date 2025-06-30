@@ -35,16 +35,16 @@ class Curso extends Model
         'horario',
     ];
 
-    // 🔑 Relación Many-to-Many hacia User usando tabla pivot
     public function usuarios()
-    {
-        return $this->belongsToMany(
-            User::class,        // Modelo relacionado
-            'inscripcions',     // Tabla pivot
-            'curso_codigo',     // FK de Curso en pivot
-            'user_id',          // FK de User en pivot
-            'codigo',           // Clave local en Curso
-            'id'                // Clave local en User
-        );
-    }
+{
+    return $this->belongsToMany(
+        User::class,
+        'inscripciones',
+        'curso_codigo',
+        'user_id'
+    )->withPivot('fecha_inscripcion') // <-- COINCIDE con la migración
+    ->withTimestamps();
+}
+
+
 }
