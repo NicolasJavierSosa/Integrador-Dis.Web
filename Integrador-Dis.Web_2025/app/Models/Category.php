@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Course;
 
 class Category extends Model
 {
@@ -10,6 +11,6 @@ class Category extends Model
     protected $fillable = ['name', 'description'];
 
     public function Courses(){
-        return $this->hasMany(Curso::class, 'category_id');
+        return $this->hasMany(Course::class, 'category_id');
     }
 }

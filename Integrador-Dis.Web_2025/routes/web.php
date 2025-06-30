@@ -46,11 +46,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('/admin/courses', [AdminController::class, 'courses'])->name('admin.courses');
-        Route::get('/admin/roles', [AdminController::class, 'roles'])->name('admin.roles');
+    Route::get('/admin/roles', [AdminController::class, 'roles'])->name('admin.roles');
     
     // Rutas para ABM de usuarios
     Route::post('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
     Route::get('/admin/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
     Route::put('/admin/users/update', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::delete('/admin/users/{id}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
+
+    //Rutas para ABM de cursos
 });

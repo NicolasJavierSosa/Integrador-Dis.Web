@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\Inscription;
+use App\Models\Course;
 
 class User extends Authenticatable
 {
@@ -37,16 +39,13 @@ class User extends Authenticatable
         ];
     }
 
-    // 🔑 Relación Many-to-Many hacia Curso usando tabla pivot
+    public function inscripciones()
+    {
+        return $this->hasMany(Inscription::class);
+    }
+
     public function cursos()
     {
-        return $this->belongsToMany(
-            Curso::class,       // Modelo relacionado
-            'inscripcions',     // Tabla pivot
-            'user_id',          // FK de User en pivot
-            'curso_codigo',     // FK de Curso en pivot
-            'id',               // Clave local en User
-            'codigo'            // Clave local en Curso
-        );
-    }
+        return $this->belongsToMany(Course::class, 'inscriptions')->withPivot('inscripcion_date')->withTimestamps();
+    } 
 }
