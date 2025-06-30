@@ -42,4 +42,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
     Route::put('/admin/users/update', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::delete('/admin/users/{id}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
+
+    //Rutas para ABM de cursos
 });
