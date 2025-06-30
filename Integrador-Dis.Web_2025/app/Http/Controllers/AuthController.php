@@ -27,19 +27,18 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         if (Auth::user()->role === 'admin') {
-            // Admins SIEMPRE al dashboard de admin
             return redirect()->route('dashboard');
-        } else {
-            // Usuarios normales => volver a la URL protegida que pidió
-            return redirect()->intended(route('welcome'));
         }
 
+        // 🗝️ Este hace la magia:
+        return redirect()->intended(route('curso.inicio'));
     } else {
         return back()->withErrors([
             'email' => 'El usuario o la contraseña son incorrectos.',
         ]);
     }
 }
+
 
 
     public function logout(Request $request) {
