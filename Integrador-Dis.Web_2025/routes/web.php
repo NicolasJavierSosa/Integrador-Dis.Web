@@ -2,9 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', function () {
-//     return view('inicioSesion');
-// });
+Route::get('/', function () {
+    return view('welcome');
+ });
 
 Route::get('/app', function () {
     return view('estructuras.app', ['nombre' => 'Alumno'] );
@@ -19,7 +19,7 @@ Route::get('/inicioAdmin', function () {
 //     return view('registro');
 // });
 // Pantalla de login
-Route::get('/', function () {
+Route::get('/login', function () {
     return view('inicioSesion');
 })->name('login');
 
@@ -40,3 +40,7 @@ Route::get('/gestionUsuarios', function () {
 Route::get('/gestionRoles', function () {
     return view('admin.gestionRoles', ['nombre' => 'Adminn'] );
 })->name('gestionRoles');
+
+Route::get('/cursosAlumno', function () {
+    return view('alumnos.cursosAlumno', ['nombre' => 'Alumno'] );
+})->name('cursosAlumno');
