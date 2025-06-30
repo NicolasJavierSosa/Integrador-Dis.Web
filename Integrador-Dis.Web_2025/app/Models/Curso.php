@@ -11,11 +11,12 @@ class Curso extends Model
 
     protected $table = 'cursos';
     protected $primaryKey = 'codigo';  // Clave primaria personalizada
-    public $incrementing = false;      // Clave string, no autoincremental
-    protected $keyType = 'string';     // Es string
+    public $incrementing = true;      // Clave string, no autoincremental
+    protected $keyType = 'integer';     // Es string
 
+    //modalidad
+    //dia
     protected $fillable = [
-        'codigo',
         'nombre',
         'descripcion',
         'fecha_inicio',
@@ -27,7 +28,7 @@ class Curso extends Model
         'horario',
     ];
 
-    protected $dates = [
+    protected $casts = [
         'fecha_inicio',
         'fecha_fin',
         'fecha_limite_inscripcion',
