@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use App\Models\Inscription;
+use App\Models\Course;
 
 class User extends Authenticatable
 {
@@ -44,6 +45,6 @@ class User extends Authenticatable
 
     public function cursos()
     {
-        return $this->belongsToMany(Curso::class, 'inscriptions')->withPivot('inscripcion_date')->withTimestamps();
+        return $this->belongsToMany(Course::class, 'inscriptions')->withPivot('inscripcion_date')->withTimestamps();
     } 
 }
