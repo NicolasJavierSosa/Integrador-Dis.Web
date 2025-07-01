@@ -1,12 +1,11 @@
-@extends('estructuras.appAlumnos')
-
+@extends('estructuras.app')
 @section('tittle', 'AureaCursos - Inicio')
-
 @push('css')
     <link rel="stylesheet" href="{{ asset('css/inicios.css') }}">
 @endpush
 
 @section('contenido')
+    <!-- aca el contenido para agregar -->
     <main class="flex-grow p-8 bg-gray-50">
         <!-- Sección de Presentación -->
         <section class="mb-10 p-6 bg-purple-100 rounded-lg shadow-inner">
