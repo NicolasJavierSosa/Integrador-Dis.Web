@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\MisCursosController;
+use App\Http\Controllers\AlumnoController;
 
 
 Route::middleware(['auth'])->group(function () {
@@ -19,6 +20,7 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+Route::get('/alumnos/cursos', [MisCursosController::class, 'misCursos'])->name('alumno.cursos');
 
 Route::get('/inicioAlumno', [CursoController::class, 'index'])
      ->name('curso.inicio');
