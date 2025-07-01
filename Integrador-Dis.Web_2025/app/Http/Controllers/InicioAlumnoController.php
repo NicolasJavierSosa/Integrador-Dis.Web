@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Curso;
 
 class InicioAlumnoController extends Controller
 {
@@ -14,7 +14,7 @@ class InicioAlumnoController extends Controller
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para inscribirte.');
         }
 
-        $curso = Curso::findOrFail($codigo);
+        $curso = Course::findOrFail($codigo);
 
         $user = Auth::user();
 
@@ -25,6 +25,4 @@ class InicioAlumnoController extends Controller
 
         return redirect()->back()->with('success', 'Te has inscrito correctamente.');
     }
-
-    
 }

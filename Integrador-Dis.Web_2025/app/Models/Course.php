@@ -17,37 +17,37 @@ class Course extends Model
     //modalidad
     //dia
     protected $fillable = [
-    'nombre',
-    'descripcion',
-    'fecha_inicio',
-    'fecha_fin',
-    'fecha_limite_inscripcion',
-    'cupo',
-    'costo_inscripcion',
-    'costo_mensual',
-    'horario',
-    'modalidad',
-    'dias',
-];
+        'nombre',
+        'descripcion',
+        'fecha_inicio',
+        'fecha_fin',
+        'fecha_limite_inscripcion',
+        'cupo',
+        'costo_inscripcion',
+        'costo_mensual',
+        'horario',
+        'modalidad',
+        'dias',
+    ];
 
     protected $casts = [
-    'fecha_inicio' => 'date',
-    'fecha_fin' => 'date',
-    'fecha_limite_inscripcion' => 'date',
-    'horario' => 'array',
-    'dias' => 'array',
-];
+        'fecha_inicio' => 'date',
+        'fecha_fin' => 'date',
+        'fecha_limite_inscripcion' => 'date',
+        'horario' => 'array',
+        'dias' => 'array',
+    ];
 
     public function usuarios()
-{
-    return $this->belongsToMany(
-        User::class,
-        'inscripciones',
-        'curso_codigo',
-        'user_id'
-    )->withPivot('fecha_inscripcion') // <-- COINCIDE con la migración
-    ->withTimestamps();
-}
+    {
+        return $this->belongsToMany(
+            User::class,
+            'inscripciones',
+            'curso_codigo',
+            'user_id'
+        )->withPivot('fecha_inscripcion') // <-- COINCIDE con la migración
+        ->withTimestamps();
+    }
 
 
 }

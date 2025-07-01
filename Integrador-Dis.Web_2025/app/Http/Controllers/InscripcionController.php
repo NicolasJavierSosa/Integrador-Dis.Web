@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Curso;
+use App\Models\Course;
 
 class InscripcionController extends Controller
 {
@@ -12,23 +12,36 @@ class InscripcionController extends Controller
     {
         // Verificar autenticación
         if (!Auth::check()) {
-    return redirect()->route('login')
-           ->with('error', 'Debes iniciar sesión para inscribirte.');
-}
+            return redirect()->route('login')
+                   ->with('error', 'Debes iniciar sesión para inscribirte.');
+        }
 
         try {
-            $curso = Curso::findOrFail($codigo);
+            $curso = Course::findOrFail($codigo);
             $user = Auth::user();
 
-            // Verificar si ya está inscrito
-            if ($user->cursos()->where('codigo', $codigo)->exists()) {
+            // Verificar si ya está inscrito - CORREGIDO
+            if ($user->cursos()->where('cursos.codigo', $codigo)->exists()) {
                 return redirect()->back()
                        ->with('info', 'Ya estás inscrito en este curso.');
             }
 
-            // Realizar la inscripción
+            // Verificar si el curso tiene cupos disponibles
+            $inscritosCount = $curso->usuarios()->count();
+            if ($inscritosCount >= $curso->cupo) {
+                return redirect()->back()
+                       ->with('error', 'El curso ya no tiene cupos disponibles.');
+            }
+
+            // Verificar si aún está en período de inscripción
+            if (now()->gt($curso->fecha_limite_inscripcion)) {
+                return redirect()->back()
+                       ->with('error', 'El período de inscripción para este curso ya ha finalizado.');
+            }
+
+            // Realizar la inscripción - CORREGIDO
             $user->cursos()->attach($codigo, [
-                'fecha_inscripcion' => now(),  // Usar el nombre correcto del campo
+                'fecha_inscripcion' => now(),
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
