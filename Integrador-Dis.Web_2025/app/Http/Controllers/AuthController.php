@@ -18,24 +18,27 @@ class AuthController extends Controller
     }
 
     public function login(Request $request) {
-        $loginData = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-        if (Auth::attempt($loginData)) {
-            $request->session()->regenerate();
-            if (Auth::user()->role === 'admin') {
-                return redirect()->route('dashboard');
-            }
-            else {
-                return redirect()->route('welcome');
-            }
-        } else {
-            return back()->withErrors([
-                'email' => 'El usuario o la contraseña son incorrectos.',
-            ]);
+    $loginData = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|string',
+    ]);
+
+    if (Auth::attempt($loginData)) {
+        $request->session()->regenerate();
+
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('dashboard');
         }
+
+        return redirect()->intended(route('curso.inicio'));
+    } else {
+        return back()->withErrors([
+            'email' => 'El usuario o la contraseña son incorrectos.',
+        ]);
     }
+}
+
+
 
     public function logout(Request $request) {
         if (Auth::check()) {

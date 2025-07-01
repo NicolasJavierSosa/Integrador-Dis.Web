@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Enums\ModalidadEnum;
+use App\Enums\DiaSemanaEnum;
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use App\Models\Course;
+use App\Models\Curso;
 use App\Models\Inscription;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
 
 class CoursesAndInscriptionsSeeder extends Seeder
 {
@@ -17,151 +17,171 @@ class CoursesAndInscriptionsSeeder extends Seeder
      */
     public function run(): void
     {
-        // Crear 5 cursos
+        // Crear 10 cursos variados
         $courses = [
             [
-                'name' => 'Programación Web con Laravel',
-                'description' => 'Aprende a desarrollar aplicaciones web modernas con Laravel Framework',
-                'category' => 'Desarrollo Web',
-                'owner' => 'Prof. Juan Pérez',
-                'begin_date' => '2025-07-15',
-                'end_date' => '2025-09-15',
-                'insc_date_limit' => '2025-07-10',
-                'quota' => 6,
-                'mode' => 'Presencial',
-                'insc_cost' => 50.00,
-                'month_cost' => 150.00,
-                'schedule' => json_encode(['19:00-21:00']),
-                'days' => json_encode(['Lunes', 'Miércoles'])
+                'nombre' => 'Programación Web con Laravel',
+                'descripcion' => 'Aprende a crear aplicaciones web con Laravel.',
+                'fecha_inicio' => '2025-07-10',
+                'fecha_fin' => '2025-09-10',
+                'fecha_limite_inscripcion' => '2025-07-05',
+                'cupo' => 10,
+                'costo_inscripcion' => 50.00,
+                'costo_mensual' => 150.00,
+                'horario' => ['19:00-21:00'],
+                'modalidad' => ModalidadEnum::PRESENCIAL->value,
+                'dias' => [DiaSemanaEnum::LUNES->value, DiaSemanaEnum::MIERCOLES->value],
             ],
             [
-                'name' => 'Diseño UX/UI',
-                'description' => 'Fundamentos del diseño de experiencia e interfaz de usuario',
-                'category' => 'Diseño',
-                'owner' => 'Prof. Ana García',
-                'begin_date' => '2025-08-01',
-                'end_date' => '2025-10-01',
-                'insc_date_limit' => '2025-07-25',
-                'quota' => 5,
-                'mode' => 'Virtual',
-                'insc_cost' => 30.00,
-                'month_cost' => 120.00,
-                'schedule' => json_encode(['18:00-20:00']),
-                'days' => json_encode(['Martes', 'Jueves'])
+                'nombre' => 'Introducción a Python',
+                'descripcion' => 'Curso básico de programación con Python.',
+                'fecha_inicio' => '2025-08-01',
+                'fecha_fin' => '2025-10-01',
+                'fecha_limite_inscripcion' => '2025-07-25',
+                'cupo' => 8,
+                'costo_inscripcion' => 40.00,
+                'costo_mensual' => 120.00,
+                'horario' => ['18:00-20:00'],
+                'modalidad' => ModalidadEnum::VIRTUAL->value,
+                'dias' => [DiaSemanaEnum::MARTES->value, DiaSemanaEnum::JUEVES->value],
             ],
             [
-                'name' => 'Marketing Digital',
-                'description' => 'Estrategias de marketing en el mundo digital',
-                'category' => 'Marketing',
-                'owner' => 'Prof. Carlos Mendoza',
-                'begin_date' => '2025-07-20',
-                'end_date' => '2025-09-20',
-                'insc_date_limit' => '2025-07-15',
-                'quota' => 4,
-                'mode' => 'Híbrida',
-                'insc_cost' => 40.00,
-                'month_cost' => 130.00,
-                'schedule' => json_encode(['19:30-21:30']),
-                'days' => json_encode(['Lunes', 'Viernes'])
+                'nombre' => 'Data Science con R',
+                'descripcion' => 'Análisis de datos con R.',
+                'fecha_inicio' => '2025-07-20',
+                'fecha_fin' => '2025-09-20',
+                'fecha_limite_inscripcion' => '2025-07-15',
+                'cupo' => 6,
+                'costo_inscripcion' => 45.00,
+                'costo_mensual' => 140.00,
+                'horario' => ['20:00-22:00'],
+                'modalidad' => ModalidadEnum::HIBRIDA->value,
+                'dias' => [DiaSemanaEnum::MIERCOLES->value, DiaSemanaEnum::VIERNES->value],
             ],
             [
-                'name' => 'Análisis de Datos con Python',
-                'description' => 'Introducción al análisis de datos usando Python y pandas',
-                'category' => 'Data Science',
-                'owner' => 'Prof. María Rodriguez',
-                'begin_date' => '2025-08-05',
-                'end_date' => '2025-10-05',
-                'insc_date_limit' => '2025-07-30',
-                'quota' => 3,
-                'mode' => 'Virtual',
-                'insc_cost' => 45.00,
-                'month_cost' => 140.00,
-                'schedule' => json_encode(['20:00-22:00']),
-                'days' => json_encode(['Miércoles', 'Sábado'])
+                'nombre' => 'Marketing Digital',
+                'descripcion' => 'Promoción de productos en internet.',
+                'fecha_inicio' => '2025-08-05',
+                'fecha_fin' => '2025-10-05',
+                'fecha_limite_inscripcion' => '2025-07-30',
+                'cupo' => 12,
+                'costo_inscripcion' => 60.00,
+                'costo_mensual' => 180.00,
+                'horario' => ['19:30-21:30'],
+                'modalidad' => ModalidadEnum::VIRTUAL->value,
+                'dias' => [DiaSemanaEnum::JUEVES->value],
             ],
             [
-                'name' => 'Fotografía Digital',
-                'description' => 'Técnicas profesionales de fotografía digital',
-                'category' => 'Arte',
-                'owner' => 'Prof. Luis Torres',
-                'begin_date' => '2025-07-25',
-                'end_date' => '2025-09-25',
-                'insc_date_limit' => '2025-07-20',
-                'quota' => 2,
-                'mode' => 'Presencial',
-                'insc_cost' => 35.00,
-                'month_cost' => 110.00,
-                'schedule' => json_encode(['17:00-19:00']),
-                'days' => json_encode(['Jueves', 'Domingo'])
-            ]
+                'nombre' => 'Fotografía Digital',
+                'descripcion' => 'Curso de técnicas de fotografía.',
+                'fecha_inicio' => '2025-07-25',
+                'fecha_fin' => '2025-09-25',
+                'fecha_limite_inscripcion' => '2025-07-20',
+                'cupo' => 5,
+                'costo_inscripcion' => 35.00,
+                'costo_mensual' => 100.00,
+                'horario' => ['17:00-19:00'],
+                'modalidad' => ModalidadEnum::PRESENCIAL->value,
+                'dias' => [DiaSemanaEnum::SABADO->value],
+            ],
+            [
+                'nombre' => 'Diseño UX/UI',
+                'descripcion' => 'Fundamentos de UX y UI.',
+                'fecha_inicio' => '2025-08-10',
+                'fecha_fin' => '2025-10-10',
+                'fecha_limite_inscripcion' => '2025-08-05',
+                'cupo' => 7,
+                'costo_inscripcion' => 55.00,
+                'costo_mensual' => 160.00,
+                'horario' => ['18:30-20:30'],
+                'modalidad' => ModalidadEnum::HIBRIDA->value,
+                'dias' => [DiaSemanaEnum::MARTES->value, DiaSemanaEnum::VIERNES->value],
+            ],
+            [
+                'nombre' => 'Inglés Básico',
+                'descripcion' => 'Curso introductorio de inglés.',
+                'fecha_inicio' => '2025-07-15',
+                'fecha_fin' => '2025-09-15',
+                'fecha_limite_inscripcion' => '2025-07-10',
+                'cupo' => 15,
+                'costo_inscripcion' => 30.00,
+                'costo_mensual' => 90.00,
+                'horario' => ['17:30-19:30'],
+                'modalidad' => ModalidadEnum::PRESENCIAL->value,
+                'dias' => [DiaSemanaEnum::LUNES->value, DiaSemanaEnum::MIERCOLES->value],
+            ],
+            [
+                'nombre' => 'Excel Avanzado',
+                'descripcion' => 'Automatización y análisis con Excel.',
+                'fecha_inicio' => '2025-07-22',
+                'fecha_fin' => '2025-09-22',
+                'fecha_limite_inscripcion' => '2025-07-17',
+                'cupo' => 9,
+                'costo_inscripcion' => 25.00,
+                'costo_mensual' => 80.00,
+                'horario' => ['18:00-20:00'],
+                'modalidad' => ModalidadEnum::VIRTUAL->value,
+                'dias' => [DiaSemanaEnum::MARTES->value],
+            ],
+            [
+                'nombre' => 'Redacción Creativa',
+                'descripcion' => 'Desarrollo de habilidades de escritura.',
+                'fecha_inicio' => '2025-08-15',
+                'fecha_fin' => '2025-10-15',
+                'fecha_limite_inscripcion' => '2025-08-10',
+                'cupo' => 8,
+                'costo_inscripcion' => 40.00,
+                'costo_mensual' => 110.00,
+                'horario' => ['19:00-21:00'],
+                'modalidad' => ModalidadEnum::HIBRIDA->value,
+                'dias' => [DiaSemanaEnum::JUEVES->value],
+            ],
+            [
+                'nombre' => 'Gestión de Proyectos',
+                'descripcion' => 'Planificación y gestión de proyectos.',
+                'fecha_inicio' => '2025-07-28',
+                'fecha_fin' => '2025-09-28',
+                'fecha_limite_inscripcion' => '2025-07-23',
+                'cupo' => 10,
+                'costo_inscripcion' => 50.00,
+                'costo_mensual' => 130.00,
+                'horario' => ['18:00-20:00'],
+                'modalidad' => ModalidadEnum::PRESENCIAL->value,
+                'dias' => [DiaSemanaEnum::LUNES->value],
+            ],
         ];
 
         $createdCourses = [];
         foreach ($courses as $courseData) {
-            $createdCourses[] = Course::create($courseData);
+            $courseData['horario'] = json_encode($courseData['horario']);
+            $courseData['dias'] = json_encode($courseData['dias']);
+            $createdCourses[] = Curso::create($courseData);
         }
 
-        // Crear 20 estudiantes
-        $students = [
-            ['dni' => '12345670', 'name' => 'María', 'surname' => 'González', 'email' => 'maria.gonzalez@email.com', 'gender' => 'Femenino', 'birth_date' => '1995-03-15'],
-            ['dni' => '23456789', 'name' => 'Juan', 'surname' => 'López', 'email' => 'juan.lopez@email.com', 'gender' => 'Masculino', 'birth_date' => '1992-07-22'],
-            ['dni' => '34567890', 'name' => 'Ana', 'surname' => 'Martín', 'email' => 'ana.martin@email.com', 'gender' => 'Femenino', 'birth_date' => '1998-11-03'],
-            ['dni' => '45678901', 'name' => 'Pedro', 'surname' => 'Sánchez', 'email' => 'pedro.sanchez@email.com', 'gender' => 'Masculino', 'birth_date' => '1990-09-18'],
-            ['dni' => '56789012', 'name' => 'Laura', 'surname' => 'Fernández', 'email' => 'laura.fernandez@email.com', 'gender' => 'Femenino', 'birth_date' => '1997-01-25'],
-            ['dni' => '67890123', 'name' => 'Carlos', 'surname' => 'Ruiz', 'email' => 'carlos.ruiz@email.com', 'gender' => 'Masculino', 'birth_date' => '1993-05-12'],
-            ['dni' => '78901234', 'name' => 'Sofía', 'surname' => 'Moreno', 'email' => 'sofia.moreno@email.com', 'gender' => 'Femenino', 'birth_date' => '1996-08-07'],
-            ['dni' => '89012345', 'name' => 'Diego', 'surname' => 'Jiménez', 'email' => 'diego.jimenez@email.com', 'gender' => 'Masculino', 'birth_date' => '1994-12-30'],
-            ['dni' => '90123456', 'name' => 'Elena', 'surname' => 'Herrera', 'email' => 'elena.herrera@email.com', 'gender' => 'Femenino', 'birth_date' => '1999-04-14'],
-            ['dni' => '01234567', 'name' => 'Miguel', 'surname' => 'Castro', 'email' => 'miguel.castro@email.com', 'gender' => 'Masculino', 'birth_date' => '1991-10-08'],
-            ['dni' => '11234567', 'name' => 'Carmen', 'surname' => 'Vega', 'email' => 'carmen.vega@email.com', 'gender' => 'Femenino', 'birth_date' => '1995-06-21'],
-            ['dni' => '21234567', 'name' => 'Alejandro', 'surname' => 'Ramos', 'email' => 'alejandro.ramos@email.com', 'gender' => 'Masculino', 'birth_date' => '1992-02-17'],
-            ['dni' => '31234567', 'name' => 'Lucía', 'surname' => 'Ortega', 'email' => 'lucia.ortega@email.com', 'gender' => 'Femenino', 'birth_date' => '1998-09-05'],
-            ['dni' => '41234567', 'name' => 'Roberto', 'surname' => 'Silva', 'email' => 'roberto.silva@email.com', 'gender' => 'Masculino', 'birth_date' => '1990-01-13'],
-            ['dni' => '51234567', 'name' => 'Patricia', 'surname' => 'Mendez', 'email' => 'patricia.mendez@email.com', 'gender' => 'Femenino', 'birth_date' => '1997-07-28'],
-            ['dni' => '61234567', 'name' => 'Fernando', 'surname' => 'Cruz', 'email' => 'fernando.cruz@email.com', 'gender' => 'Masculino', 'birth_date' => '1993-11-16'],
-            ['dni' => '71234567', 'name' => 'Raquel', 'surname' => 'Delgado', 'email' => 'raquel.delgado@email.com', 'gender' => 'Femenino', 'birth_date' => '1996-03-09'],
-            ['dni' => '81234567', 'name' => 'Andrés', 'surname' => 'Vargas', 'email' => 'andres.vargas@email.com', 'gender' => 'Masculino', 'birth_date' => '1994-05-24'],
-            ['dni' => '91234567', 'name' => 'Beatriz', 'surname' => 'Flores', 'email' => 'beatriz.flores@email.com', 'gender' => 'Femenino', 'birth_date' => '1999-12-02'],
-            ['dni' => '02234567', 'name' => 'Javier', 'surname' => 'Peña', 'email' => 'javier.pena@email.com', 'gender' => 'Masculino', 'birth_date' => '1991-08-11']
-        ];
-
-        $createdStudents = [];
-        foreach ($students as $studentData) {
-            $createdStudents[] = User::create([
+        // Crear 20 estudiantes de ejemplo
+        for ($i = 1; $i <= 20; $i++) {
+            $student = User::create([
                 'role' => 'student',
-                'dni' => $studentData['dni'],
-                'name' => $studentData['name'],
-                'surname' => $studentData['surname'],
-                'gender' => $studentData['gender'],
-                'birth_date' => $studentData['birth_date'],
-                'email' => $studentData['email'],
-                'address' => 'Dirección ejemplo',
+                'dni' => str_pad($i, 8, '0', STR_PAD_LEFT),
+                'name' => "Alumno{$i}",
+                'surname' => "Apellido{$i}",
+                'gender' => $i % 2 === 0 ? 'Femenino' : 'Masculino',
+                'birth_date' => '2000-01-01',
+                'email' => "alumno{$i}@correo.com",
+                'address' => 'Calle Falsa 123',
                 'phone' => '123456789',
-                'password' => Hash::make('password123')
+                'password' => Hash::make('password123'),
+            ]);
+
+            // Inscribirlos en cursos aleatorios
+            $course = $createdCourses[array_rand($createdCourses)];
+            $student->cursos()->attach($course->codigo, [
+                'fecha_inscripcion' => now()->subDays(rand(1, 10)),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
 
-        // Distribuir estudiantes en cursos
-        $courseDistribution = [
-            0 => 6, // Laravel: 6 estudiantes
-            1 => 5, // UX/UI: 5 estudiantes  
-            2 => 4, // Marketing: 4 estudiantes
-            3 => 3, // Python: 3 estudiantes
-            4 => 2  // Fotografía: 2 estudiantes
-        ];
-
-        $studentIndex = 0;
-        foreach ($courseDistribution as $courseIndex => $studentCount) {
-            for ($i = 0; $i < $studentCount; $i++) {
-                Inscription::create([
-                    'user_id' => $createdStudents[$studentIndex]->id,
-                    'course_id' => $createdCourses[$courseIndex]->id,
-                    'inscripcion_date' => now()->subDays(rand(1, 30))
-                ]);
-                $studentIndex++;
-            }
-        }
-
-        $this->command->info('✅ Creados 5 cursos y 20 estudiantes con sus inscripciones');
+        $this->command->info('✅ Se crearon 10 cursos, 20 estudiantes y se realizaron inscripciones.');
     }
 }

@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\CursoController;
+use App\Http\Controllers\MisCursosController;
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin', function () {
@@ -14,6 +18,22 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
+
+
+Route::get('/inicioAlumno', [CursoController::class, 'index'])
+     ->name('curso.inicio');
+
+Route::post('/curso/{codigo}/inscribirse', [InscripcionController::class, 'inscribir'])
+    ->middleware('auth')
+    ->name('curso.inscribirse');
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/misCursos', [MisCursosController::class, 'misCursos'])->name('alumno.misCursos');
+});
+
+Route::delete('/alumno/curso/{curso}', [MisCursosController::class, 'darDeBaja'])->name('alumno.bajaCurso');
+
 
 Route::middleware((['guest']))->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');

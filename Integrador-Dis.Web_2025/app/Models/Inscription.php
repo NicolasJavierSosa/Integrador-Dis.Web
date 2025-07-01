@@ -9,7 +9,11 @@ class Inscription extends Model
 {
     use HasFactory;
 
-    protected $table = 'inscriptions';
+    protected $table = 'inscripciones';
+
+public function curso() {
+    return $this->belongsTo(Curso::class, 'curso_codigo', 'codigo');
+}
 
     protected $fillable = [
         'user_id',
@@ -17,7 +21,7 @@ class Inscription extends Model
         'status',
         'amount_id',
         'notes',
-        'inscripcion_date'
+        'fecha_inscripcion'
     ];
 
     protected $casts = [
@@ -28,7 +32,4 @@ class Inscription extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function course() {
-        return $this->belongsTo(Course::class);
-    }
 }
