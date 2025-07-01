@@ -8,6 +8,9 @@ use App\Models\Curso;
 
 class InicioAlumnoController extends Controller
 {
+
+
+    
     public function inscribir(Request $request, $codigo)
     {
         if (!Auth::check()) {

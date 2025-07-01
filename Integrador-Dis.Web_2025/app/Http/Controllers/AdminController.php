@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Course;
+use App\Enums\ModalidadEnum;
+use App\Enums\DiaSemanaEnum;
+use App\Models\Curso;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -21,7 +23,7 @@ class AdminController extends Controller
         }
 
         $users = User::all();
-        $courses = Course::all();
+        $cursos = Curso::all();
 
         return view('admin.dashboard', compact('users', 'courses'));
     }
@@ -42,16 +44,17 @@ class AdminController extends Controller
         return view('admin.users', compact('users', 'permissions', 'roles'));
     }
 
-    public function courses() {
-        if (Auth::user()->role !== 'admin') {
-            abort(403, 'Acceso no autorizado');
-            return view('/dashboard');
-        }
-
-        //Lógica para obtener los cursos
-        
-        return view('admin.courses');
+    public function cursos() {
+    if (Auth::user()->role !== 'admin') {
+        abort(403, 'Acceso no autorizado');
+        return view('/dashboard');
     }
+
+    $cursos = Curso::all(); // ✅ Aquí cargas los cursos
+
+    return view('admin.gestionCursos', compact('cursos')); // ✅ Aquí los pasas a la vista
+}
+
 
 
     // METODOS ABM (La lógica de creación, edición y eliminación de usuarios)
@@ -252,5 +255,117 @@ class AdminController extends Controller
     }
 
     //METODOS ABM de ROLES
+
+    //cursos
+
+    public function storeCourse(Request $request)
+{
+    if (Auth::user()->role !== 'admin') {
+        abort(403, 'Acceso no autorizado');
+    }
+
+    $validatedData = $request->validate([
+        'nombre' => 'required|string|max:255',
+        'descripcion' => 'nullable|string',
+        'fecha_inicio' => 'required|date',
+        'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+        'fecha_limite_inscripcion' => 'nullable|date|before_or_equal:fecha_inicio',
+        'cupo' => 'required|integer|min:1',
+        'costo_inscripcion' => 'required|numeric|min:0',
+        'costo_mensual' => 'required|numeric|min:0',
+        'modalidad' => 'required|string',
+        'paymentDeadlineDay' => 'required|integer|between:1,29',
+        'horario' => 'nullable|json' // Cambiado de array a json
+    ]);
+
+    // Convierte el horario JSON a array si es necesario
+    if ($request->horario) {
+        $validatedData['horario'] = json_decode($request->horario, true);
+    }
+
+    $curso = new Curso();
+    $curso->fill($validatedData);
+    $curso->save();
+
+    return redirect()->route('admin.cursos')->with('success', 'Curso creado correctamente.');
+}
+
+public function updateCourse(Request $request, $codigo)
+{
+    if (Auth::user()->role !== 'admin') {
+        abort(403, 'Acceso no autorizado');
+    }
+
+    $validatedData = $request->validate([
+        'nombre' => 'required|string|max:255',
+        'descripcion' => 'nullable|string',
+        'fecha_inicio' => 'required|date',
+        'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+        'fecha_limite_inscripcion' => 'nullable|date',
+        'cupo' => 'nullable|integer',
+        'costo_inscripcion' => 'nullable|numeric',
+        'costo_mensual' => 'nullable|numeric',
+        'horario' => 'nullable|array',
+        'dias' => 'nullable|array',
+        'modalidad' => 'nullable|string',
+    ]);
+
+    $curso = Curso::findOrFail($codigo);
+    $curso->update($validatedData);
+
+    return redirect()->route('admin.courses')->with('success', 'Curso actualizado correctamente.');
+}
+
+
+public function gestionCursos()
+    {
+        $cursos = Curso::all();
+        $modalidades = ModalidadEnum::cases();
+        $diasSemana = DiaSemanaEnum::cases(); // 👈 aquí cargas los días
+
+        return view('admin.gestionCursos', compact('cursos', 'modalidades', 'diasSemana'));
+    }
+
+public function destroyCourse($codigo)
+{
+    if (Auth::user()->role !== 'admin') {
+        abort(403, 'Acceso no autorizado');
+    }
+
+    $curso = Curso::findOrFail($codigo);
+    $curso->delete();
+
+    return redirect()->route('admin.courses')->with('success', 'Curso eliminado correctamente.');
+}
+
+public function editCourse($codigo)
+{
+    if (Auth::user()->role !== 'admin') {
+        abort(403, 'Acceso no autorizado');
+    }
+
+    $curso = Curso::findOrFail($codigo);
+    $cursos = Curso::all(); // Para la lista de cursos
     
+    return view('admin.gestionCursos', compact('curso', 'cursos'));
+}
+    
+public function create()
+{
+    return view('admin.cursos.create', [
+        'modalidades' => ModalidadEnum::cases(),
+        'diasSemana' => DiaSemanaEnum::cases(),
+    ]);
+}
+
+public function edit($codigo)
+{
+    $curso = Curso::findOrFail($codigo);
+
+    return view('admin.cursos.edit', [
+        'curso' => $curso,
+        'modalidades' => ModalidadEnum::cases(),
+        'diasSemana' => DiaSemanaEnum::cases(),
+    ]);
+}
 }

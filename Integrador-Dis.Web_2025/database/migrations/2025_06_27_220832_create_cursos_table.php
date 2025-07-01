@@ -26,7 +26,7 @@ return new class extends Migration
 
             // 👇 CAMBIO: horario y dias como JSON
             $table->json('horario');
-            $table->json('dias');
+            $table->json('dias')->nullable();
 
             $table->string('modalidad');
 
