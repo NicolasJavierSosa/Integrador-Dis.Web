@@ -22,8 +22,8 @@
             <!-- Menú de Navegación -->
             <nav class="hidden md:flex space-x-8">
                 <a href="{{ route('admin.dashboard') }}" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Inicio</a>
-                <a href="{{ route('admin.users') }}" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Gestión de Cursos</a>
-                <a href="{{ route('admin.courses') }}" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Gestión de Usuarios</a>
+                <a href="{{ route('admin.courses') }}" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Gestión de Cursos</a>
+                <a href="{{ route('admin.users') }}" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Gestión de Usuarios</a>
             </nav>
         </div>
         <!-- Información de Usuario/Administrador -->

@@ -41,7 +41,7 @@ class User extends Authenticatable
 
     public function cursos()
 {
-    return $this->belongsToMany(Curso::class, 'inscripciones', 'user_id', 'curso_codigo')
+    return $this->belongsToMany(Course::class, 'inscripciones', 'user_id', 'curso_codigo')
                ->withPivot('fecha_inscripcion')
                ->withTimestamps();
 }

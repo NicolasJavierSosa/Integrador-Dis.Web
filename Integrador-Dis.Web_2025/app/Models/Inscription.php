@@ -12,7 +12,7 @@ class Inscription extends Model
     protected $table = 'inscripciones';
 
 public function curso() {
-    return $this->belongsTo(Curso::class, 'curso_codigo', 'codigo');
+    return $this->belongsTo(Course::class, 'curso_codigo', 'codigo');
 }
 
     protected $fillable = [

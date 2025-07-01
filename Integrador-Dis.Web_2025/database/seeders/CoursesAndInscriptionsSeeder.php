@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use App\Enums\ModalidadEnum;
 use App\Enums\DiaSemanaEnum;
+use App\Models\Course;
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use App\Models\Curso;
 use App\Models\Inscription;
 use Illuminate\Support\Facades\Hash;
 
@@ -155,7 +155,7 @@ class CoursesAndInscriptionsSeeder extends Seeder
         foreach ($courses as $courseData) {
             $courseData['horario'] = json_encode($courseData['horario']);
             $courseData['dias'] = json_encode($courseData['dias']);
-            $createdCourses[] = Curso::create($courseData);
+            $createdCourses[] = Course::create($courseData);
         }
 
         // Crear 20 estudiantes de ejemplo

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Curso;
+use App\Models\Course;
 
 class CursoController extends Controller
 {
@@ -12,7 +12,7 @@ class CursoController extends Controller
     public function index()
     {
         // Trae TODOS los cursos de la base
-        $cursos = Curso::all();
+        $cursos = Course::all();
 
         // Devuelve la vista pasando la colección
         return view('alumnos.inicioAlumno', compact('cursos'));

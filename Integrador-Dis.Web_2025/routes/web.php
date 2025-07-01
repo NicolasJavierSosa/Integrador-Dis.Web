@@ -64,7 +64,11 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/admin/users/{id}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
 
     //Rutas para ABM de cursos
-
+    Route::post('/admin/cursos', [AdminController::class, 'storeCourse'])->name('admin.cursos.store');
+    Route::get('/admin/cursos/{codigo}/edit', [AdminController::class, 'editCourse'])->name('admin.cursos.edit');
+    Route::put('/admin/cursos/{codigo}', [AdminController::class, 'updateCourse'])->name('admin.cursos.update');
+    Route::delete('/admin/cursos/{codigo}', [AdminController::class, 'destroyCourse'])->name('admin.cursos.destroy');
+    
     //Rutas para ABM de roles
     
 });

@@ -11,6 +11,8 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
+use App\Enums\ModalidadEnum;
+use App\Enums\DiaSemanaEnum;
 
 class AdminController extends Controller
 {
@@ -237,6 +239,60 @@ class AdminController extends Controller
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Error al eliminar el usuario');
         }
+    }
+
+    // METODOS ABM de CURSOS
+    public function courses()
+    {
+        $cursos = Course::all();
+        $modalidades = ModalidadEnum::cases();
+        $diasSemana = DiaSemanaEnum::cases(); // 👈 aquí cargas los días
+
+        return view('admin.courses', compact('cursos', 'modalidades', 'diasSemana'));
+    }
+
+    
+    public function destroyCourse($codigo)
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Acceso no autorizado');
+        }
+
+        $curso = Course::findOrFail($codigo);
+        $curso->delete();
+
+        return redirect()->route('admin.courses')->with('success', 'Course eliminado correctamente.');
+    }
+
+    public function editCourse($codigo)
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Acceso no autorizado');
+        }
+
+        $curso = Course::findOrFail($codigo);
+        $cursos = Course::all();
+        
+        return view('admin.gestionCursos', compact('curso', 'cursos'));
+    }
+        
+    public function create()
+    {
+        return view('admin.cursos.create', [
+            'modalidades' => ModalidadEnum::cases(),
+            'diasSemana' => DiaSemanaEnum::cases(),
+        ]);
+    }
+
+    public function edit($codigo)
+    {
+        $curso = Course::findOrFail($codigo);
+
+        return view('admin.cursos.edit', [
+            'curso' => $curso,
+            'modalidades' => ModalidadEnum::cases(),
+            'diasSemana' => DiaSemanaEnum::cases(),
+        ]);
     }
 
     //METODOS ABM de ROLES

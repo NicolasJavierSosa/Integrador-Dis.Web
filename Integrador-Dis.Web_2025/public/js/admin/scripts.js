@@ -122,3 +122,4 @@ function showValidationErrors(errors) {
     }
     showAjaxError(errorList);
 }
+
