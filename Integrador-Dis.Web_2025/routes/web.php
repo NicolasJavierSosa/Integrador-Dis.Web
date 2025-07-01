@@ -44,4 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/admin/users/{id}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
 
     //Rutas para ABM de cursos
+
+    //Rutas para ABM de roles
+    
 });

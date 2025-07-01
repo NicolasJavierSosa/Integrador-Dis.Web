@@ -42,18 +42,6 @@ class AdminController extends Controller
         return view('admin.users', compact('users', 'permissions', 'roles'));
     }
 
-    public function courses() {
-        if (Auth::user()->role !== 'admin') {
-            abort(403, 'Acceso no autorizado');
-            return view('/dashboard');
-        }
-
-        //Lógica para obtener los cursos
-        
-        return view('admin.courses');
-    }
-
-
     // METODOS ABM (La lógica de creación, edición y eliminación de usuarios)
     public function createUser(Request $request) {
         // Verifico si el usuario autenticado es un administrador
@@ -252,5 +240,65 @@ class AdminController extends Controller
     }
 
     //METODOS ABM de ROLES
-    
+    public function roles() {
+        if (Auth::user()->role !== 'admin') {
+            return redirect()->route('login')->with('error', 'Acceso no autorizado');
+        }
+
+        $roles = Role::all();
+
+        return view('admin.roles', compact('roles'));
+    }
+
+    public function createRole(Request $request) {
+        if (Auth::user()->role !== 'admin') {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Acceso no autorizado'], 403);
+            }
+            return redirect()->back()->with('error', 'Acceso no autorizado');
+        }
+
+        try {
+            $validatedData = $request->validate(['name' => 'required|max:255|string']);
+            $validatedData['name'] = strtolower($validatedData['name']);
+            if (Role::where('name', $validatedData['name'])->exists()) {
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'message' => 'El rol ya existe'], 400);
+                }
+                return redirect()->back()->with('error', 'El rol ya existe');
+            }
+
+            //valido la lista de permisos y verifico que existan
+            if ($request->has('permissions')) {
+                $permissions = $request->input('permissions');
+                $validPermissions = Permission::whereIn('name', $permissions)->pluck('name')->toArray();
+                if (count($validPermissions) !== count($permissions)) {
+                    if ($request->expectsJson()) {
+                        return response()->json(['success' => false, 'message' => 'Algunos permisos no existen'], 400);
+                    }
+                    return redirect()->back()->with('error', 'Algunos permisos no existen');
+                }
+                $validatedData['permissions'] = $validPermissions;
+            } else {
+                $validatedData['permissions'] = [];
+            }
+
+            // Crear el nuevo rol
+            $role = Role::create(['name' => $validatedData['name']]);
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Rol creado correctamente']);
+            }
+            return redirect()->back()->with('success', 'Rol creado correctamente');
+
+            //le asigno los permisos al rol
+            if (isset($validatedData['permissions']) && count($validatedData['permissions']) > 0) {
+                $role = Role::findByName($validatedData['name']);
+                $role->syncPermissions($validatedData['permissions']);
+            }
+
+        } catch (ValidationException $e){
+
+        }
+
+    }
 }
