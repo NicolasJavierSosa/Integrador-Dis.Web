@@ -282,11 +282,15 @@ class AdminController extends Controller
         
     public function create()
     {
-        return view('admin.cursos.create', [
-            'modalidades' => ModalidadEnum::cases(),
-            'diasSemana' => DiaSemanaEnum::cases(),
-        ]);
+        $modalidades = ModalidadEnum::cases();
+        $diasSemana = DiaSemanaEnum::cases();
+        $docentes = User::where('role', 'docente')->get();
+        $cursos = Course::all(); // 👉 esto faltaba
+
+        return view('admin.cursos.create', compact('modalidades', 'diasSemana', 'docentes', 'cursos'));
     }
+
+
 
     public function edit($codigo)
     {
