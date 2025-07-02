@@ -54,6 +54,12 @@
             padding: 4px;
             border-radius: 4px;
         }
+        .fixed-save-btn {
+  position: absolute; /* clave */
+  bottom: 2rem;
+  right: 2rem;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
+}
     </style>
 @endpush
 
@@ -93,9 +99,37 @@
                         <input type="date" id="endDate" name="fecha_fin" value="{{ old('fecha_fin', $curso->fecha_fin ?? '') }}" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm pr-10">
                     </div>
 
+                    
+
+                    
+<!-- Formulario compacto oculto -->
+<div id="category-form" class="hidden border border-purple-200 p-4 rounded-lg bg-white shadow-sm w-full max-w-md md:col-span-2 mx-auto">
+  <h4 class="text-lg font-semibold text-purple-700 mb-3">Nueva Categoría</h4>
+  <div class="mb-3">
+    <label for="new-category-name-input" class="block text-sm text-gray-700 mb-1">Nombre:</label>
+    <input type="text" id="new-category-name-input"
+      class="w-full border rounded px-3 py-1 text-sm focus:outline-none focus:border-purple-500">
+  </div>
+  <div class="mb-3">
+    <label for="new-category-description-input" class="block text-sm text-gray-700 mb-1">Descripción:</label>
+    <textarea id="new-category-description-input" rows="2"
+      class="w-full border rounded px-3 py-1 text-sm focus:outline-none focus:border-purple-500"></textarea>
+  </div>
+  <button 
+    type="button"
+    onclick="addCategory()"
+    class="bg-purple-600 text-white px-4 py-2 rounded-md shadow hover:bg-purple-700 transition w-full"
+  >
+    Guardar Categoría
+  </button>
+</div>
+
                     <!-- Fila 3: Categoría/s con múltiples selecciones -->
                     <div>
-
+                                        <div>
+                        <label for="capacity" class="block text-gray-700 text-lg font-semibold mb-2">Cantidad cupos:</label>
+                        <input type="number" id="capacity" name="cupo" value="{{ old('cupo', $curso->cupo ?? '') }}" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="Ej: 50">
+                    </div>
                     </div>
                     <div class="relative">
                         <label for="enrollmentDeadline" class="block text-gray-700 text-lg font-semibold mb-2">Fecha límite de inscripciones:</label>
@@ -103,20 +137,11 @@
                     </div>
 
                     <!-- Fila 4 -->
-                    <div>
-                        <label for="enrollmentCost" class="block text-gray-700 text-lg font-semibold mb-2">Costo inscripción:</label>
-                        <input type="number" id="enrollmentCost" name="costo_inscripcion" value="{{ old('costo_inscripcion', $curso->costo_inscripcion ?? '') }}" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="0.00">
-                    </div>
-                    <div>
-                        <label for="capacity" class="block text-gray-700 text-lg font-semibold mb-2">Cantidad cupos:</label>
-                        <input type="number" id="capacity" name="cupo" value="{{ old('cupo', $curso->cupo ?? '') }}" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="Ej: 50">
-                    </div>
+
+
 
                     <!-- Fila 5 -->
-                    <div>
-                        <label for="monthlyCost" class="block text-gray-700 text-lg font-semibold mb-2">Costo mensual:</label>
-                        <input type="number" id="monthlyCost" name="costo_mensual" value="{{ old('costo_mensual', $curso->costo_mensual ?? '') }}" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" placeholder="0.00">
-                    </div>
+
                     <div>
                         <label for="modality" class="block text-gray-700 text-lg font-semibold mb-2">Modalidad:</label>
                         <select id="modality" name="modalidad" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
@@ -159,194 +184,142 @@
                                         <th class="py-2 px-3 text-left text-sm font-semibold"></th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <div id="added-schedules" class="mt-4">
-                                        <input type="hidden" id="horario" name="horario" value="{{ isset($curso) ? json_encode($curso->horario) : '[]' }}">
-                                    </div>
+                                <div id="added-schedules" class="mt-4">
+                                        <input type="hidden" id="horario" name="horario" value="{{ isset($curso) ? json_encode($curso->horario_combinado) : '[]' }}">
+                                        <input type="hidden" name="dias" id="diasInput" value="{{ isset($curso) ? json_encode($curso->dias) : '[]' }}">
+                                </div>
+                                <tbody id="schedulesTableBody">
+                                    
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
                      <!-- Fila 7 -->
-                     <div>
-                        <label for="paymentDeadlineDay" class="block text-gray-700 text-lg font-semibold mb-2">
-                            Día límite de pago:
-                        </label>
 
-                        <input type="number" id="paymentDeadlineDay" name="paymentDeadlineDay" value="{{ old('paymentDeadlineDay', $curso->paymentDeadlineDay ?? '') }}"
-                            min="1" max="29"
-                            list="recommendedDays"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm"
-                            placeholder="Ej: 10" >
-                        <datalist id="recommendedDays">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                        </datalist>
-
-                        <p class="text-sm text-gray-500 mt-1">* Ingresá un día entre 1 y 29. Recomendado: 5, 10 o 15.</p>
-                    </div>
                     <!-- Combo de Estado -->
 
             </div>
-            @if($errors->any())
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-        <ul>
+            
+            <!-- Botones de Acción -->
+           <div class="relative mt-8 flex justify-between items-center">
+  <!-- Mensaje de error alineado a la IZQUIERDA -->
+
+  <!-- Botón alineado a la DERECHA -->
+  <button type="submit" class="bg-emerald-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-emerald-600 transition-all transform hover-scale-105 fixed-save-btn">
+    {{ isset($curso) ? 'Actualizar' : 'Guardar' }}
+  </button>
+</div>
+
+  </div>
+    </form>
+
+      @if ($errors->any())
+    <div
+        x-data="{ show: true }"
+        x-init="setTimeout(() => show = false, 5000)"
+        x-show="show"
+        x-transition:leave="transition ease-in duration-500"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed top-8 right-8 z-50 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-lg"
+    >
+        <ul class="text-sm list-disc pl-5">
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
             @endforeach
         </ul>
     </div>
 @endif
-            <!-- Botones de Acción -->
-            <div class="mt-8 flex justify-end space-x-4">
-    @isset($curso)
-    <form action="{{ route('admin.cursos.destroy', $curso->codigo) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este curso?');">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="bg-red-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-red-700 transition-all transform hover-scale-105">
-            Eliminar
-        </button>
-    </form>
-    @endisset
-
-    <button type="submit" class="bg-emerald-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-emerald-600 transition-all transform hover-scale-105">
-        {{ isset($curso) ? 'Actualizar' : 'Guardar' }}
-    </button>
-    </form>
-</div>
 
 
             <!-- Add Category Modal -->
-    <div id="add-category-modal" class="fixed inset-0 z-50 hidden modal-overlay">
-        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full relative transform transition-all duration-300 scale-95 opacity-0 modal-content">
-            <button onclick="closeModal('add-category-modal')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-3xl font-semibold">&times;</button>
-            <h3 class="text-2xl font-bold text-purple-800 mb-6 text-center">Gestionar Categorías</h3>
+    <!-- Botón que muestra/oculta la sección -->
 
-            <!-- Sección para añadir nueva categoría -->
-            <div class="mb-8 p-4 border border-purple-200 rounded-lg">
-                <h4 class="text-xl font-semibold text-purple-700 mb-4">Añadir Nueva Categoría</h4>
-                <div class="mb-4">
-                    <label for="new-category-name-input" class="block text-gray-700 text-sm font-bold mb-2">Nombre de la Categoría:</label>
-                    <input type="text" id="new-category-name-input" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-purple-500" placeholder="Ej: Programación">
-                </div>
-                <div class="mb-6">
-                    <label for="new-category-description-input" class="block text-gray-700 text-sm font-bold mb-2">Descripción:</label>
-                    <textarea id="new-category-description-input" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-purple-500" placeholder="Breve descripción de la categoría"></textarea>
-                </div>
-                <button onclick="addCategory()" class="btn-primary w-full py-3 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition duration-300 ease-in-out">
-                    Guardar Categoría
-                </button>
-            </div>
+
 
             <!-- Lista de cursos -->
-    <section class="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
-        <h2 class="text-3xl font-extrabold text-custom-dark-purple mb-6">Cursos registrados</h2>
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white rounded-lg shadow-md">
-                <thead>
-                    <tr class="bg-custom-lilac text-white">
-                        <th class="py-3 px-4 text-left">Nombre</th>
-                        <th class="py-3 px-4 text-left">Fecha Inicio</th>
-                        <th class="py-3 px-4 text-left">Modalidad</th>
-                        <th class="py-3 px-4 text-left">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($cursos as $c)
-                    <tr class="border-b border-gray-200 hover:bg-gray-50">
-                        <td class="py-3 px-4">{{ $c->nombre }}</td>
-                        <td class="py-3 px-4">{{ $c->fecha_inicio->format('d/m/Y') }}</td>
-                        <td class="py-3 px-4">{{ $c->modalidad }}</td>
-                        <td class="py-3 px-4 flex space-x-2">
-                            <a href="{{ route('admin.cursos.edit', $c->codigo) }}" 
-                               class="text-blue-600 hover:text-blue-800">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-                            <form id="delete-form-{{ $c->codigo }}" 
-                                  action="{{ route('admin.cursos.destroy', $c->codigo) }}" 
-                                  method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" onclick="confirmDelete('{{ $c->codigo }}')" 
-                                        class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
-                                </button>
-                            </form>
+
+        <section class="bg-white rounded-xl shadow-xl p-8 border border-gray-200 mt-10">
+    <h2 class="text-3xl font-bold text-custom-dark-purple mb-6 flex items-center gap-2">
+        <i class="fas fa-book-open text-custom-purple"></i> Cursos registrados
+    </h2>
+
+    <div class="w-full overflow-x-auto rounded-lg border border-gray-300">
+        <table class="min-w-full bg-white rounded-lg shadow-sm divide-y divide-gray-200">
+            <thead class="bg-custom-lilac text-black">
+                <tr>
+                    <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wide rounded-tl-lg">📘 Nombre</th>
+                    <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wide">🎓 Modalidad</th>
+                    <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wide">🕒 Horarios</th>
+                    <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wide">📅 Fecha Inicio</th>
+                    <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wide rounded-tr-lg">📅 Fecha Final</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-100">
+                @forelse ($cursos as $curso)
+                    <tr class="hover:bg-gray-50 transition-all">
+                        <td class="py-4 px-4 text-gray-800 font-semibold">{{ $curso->nombre }}</td>
+                        <td class="py-4 px-4 text-gray-700">{{ ucfirst($curso->modalidad) }}</td>
+
+                        <td class="py-4 px-4 text-gray-700 leading-snug">
+                            @php
+                                $horarios = is_array($curso->horario) ? $curso->horario : json_decode($curso->horario, true);
+                            @endphp
+                            @foreach ($horarios as $h)
+                                <div class="flex items-center gap-2">
+                                    <i class="far fa-clock text-indigo-500"></i>
+                                    <span>{{ ucfirst($h['day']) }} - {{ $h['time'] }}</span>
+                                </div>
+                            @endforeach
+                        </td>
+
+                        <td class="py-4 px-4 text-gray-700">
+                            {{ \Carbon\Carbon::parse($curso->fecha_inicio)->format('d/m/Y') }}
+                        </td>
+
+                        <td class="py-4 px-4 text-gray-700">
+                            <span>{{ \Carbon\Carbon::parse($curso->fecha_fin)->format('d/m/Y') }}</span>
                         </td>
                     </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-            <!-- Sección para lista de categorías existentes -->
-            <div>
-                <h4 class="text-xl font-semibold text-purple-700 mb-4">Categorías Existentes</h4>
-                <div id="category-list" class="space-y-4">
-                    <!-- Las categorías se cargarán aquí -->
-                    <p class="text-gray-500 text-center" id="no-categories-message">No hay categorías registradas.</p>
-                </div>
-            </div>
-        </div>
+                @empty
+                    <tr>
+                        <td colspan="5" class="py-6 px-4 text-center text-gray-500 italic">
+                            <i class="fas fa-info-circle"></i> No hay cursos registrados.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
+</section>
 
-    <!-- Custom Alert/Message Box -->
-    <div id="custom-alert" class="hidden">
-        <!-- El mensaje se insertará aquí -->
-    </div>
-        </section>
+<script defer src="//unpkg.com/alpinejs"></script>
 
-        <!-- Cursos Registrados -->
-        <section class="bg-white rounded-xl shadow-lg p-8 border border-gray-200 mt-8">
-            <h2 class="text-3xl font-extrabold text-custom-dark-purple mb-6">Cursos registrados:</h2>
-            <div class="w-full overflow-x-auto">
-                <table id="registeredCoursesTable" class="min-w-full bg-white rounded-lg shadow-md">
-                    <thead>
-                        <tr class="bg-custom-lilac text-custom-white">
-                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider rounded-tl-lg">Nombre del Curso</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Categoría/s</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Docente/s</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Modalidad</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Fecha Inicio</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider rounded-tr-lg">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Ejemplo de fila de datos (se cargará desde Firestore) -->
-                        <tr class="border-b border-gray-200 hover:bg-gray-50 transition-all">
-                            <td class="py-3 px-4 text-gray-800">Introducción a Python</td>
-                            <td class="py-3 px-4 text-gray-800">Programación</td>
-                            <td class="py-3 px-4 text-gray-800">Juan Pérez</td>
-                            <td class="py-3 px-4 text-gray-800">Online</td>
-                            <td class="py-3 px-4 text-gray-800">2025-07-15</td>
-                            <td class="py-3 px-4">
-                                <button class="text-custom-purple hover:text-custom-dark-purple mr-3"><i class="fas fa-edit"></i> Editar</button>
-                                <button class="text-red-600 hover:text-red-800"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                            </td>
-                        </tr>
-                        <tr class="border-b border-gray-200 hover:bg-gray-50 transition-all">
-                            <td class="py-3 px-4 text-gray-800">Diseño UX/UI Avanzado</td>
-                            <td class="py-3 px-4 text-gray-800">Diseño Gráfico</td>
-                            <td class="py-3 px-4 text-gray-800">María García</td>
-                            <td class="py-3 px-4 text-gray-800">Híbrido</td>
-                            <td class="py-3 px-4 text-gray-800">2025-08-01</td>
-                            <td class="py-3 px-4">
-                                <button class="text-custom-purple hover:text-custom-dark-purple mr-3"><i class="fas fa-edit"></i> Editar</button>
-                                <button class="text-red-600 hover:text-red-800"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                            </td>
-                        </tr>
-                        <!-- Las filas se cargarán dinámicamente -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
     </main>
 
 @push('scripts')
 <script>
+
+    function toggleCategoryForm() {
+    const form = document.getElementById('category-form');
+    form.classList.toggle('hidden');
+  }
+
+  function addCategory() {
+    // Tu lógica para registrar la categoría
+    alert('Categoría guardada!');
+    // Ocultar de nuevo si querés:
+    document.getElementById('category-form').classList.add('hidden');
+  }
+
+@if(isset($curso))
+    document.addEventListener('DOMContentLoaded', function() {
+        updateSchedulesTable(); // Esto mostrará los horarios existentes
+    });
+@endif
+
 
     function addSchedule() {
     const day = document.getElementById('scheduleDay').value;
@@ -378,51 +351,84 @@
 }
 
 function updateSchedulesTable() {
-    const schedules = JSON.parse(document.getElementById('horario').value || '[]');
+    const horarioInput = document.getElementById('horario');
+    const schedules = horarioInput.value ? JSON.parse(horarioInput.value) : [];
     const tableBody = document.querySelector('#schedulesTable tbody');
+    
+    // Limpiar tabla
     tableBody.innerHTML = '';
     
+    // Generar filas
     schedules.forEach((schedule, index) => {
         const row = document.createElement('tr');
+        row.className = 'border-b border-gray-200 hover:bg-gray-50';
+        
         row.innerHTML = `
             <td class="py-2 px-3">${schedule.day}</td>
             <td class="py-2 px-3">${schedule.time}</td>
             <td class="py-2 px-3">
-                <button type="button" onclick="removeSchedule(${index})" class="text-red-500">
-                    <i class="fas fa-times"></i>
+                <button 
+                    onclick="removeSchedule(${index})" 
+                    class="text-red-500 hover:text-red-700"
+                >
+                    <i class="fas fa-trash"></i>
                 </button>
             </td>
         `;
+        
         tableBody.appendChild(row);
     });
 }
 
+function addSchedule() {
+    const day = document.getElementById('scheduleDay').value;
+    const time = document.getElementById('scheduleTime').value;
+
+    if (!day || !time) {
+        alert("Por favor, selecciona día y hora");
+        return;
+    }
+
+    const horarioInput = document.getElementById('horario');
+    const diasInput = document.getElementById('diasInput');
+    let schedules = horarioInput.value ? JSON.parse(horarioInput.value) : [];
+
+    // Evitar duplicados
+    const exists = schedules.some(s => s.day === day && s.time === time);
+    if (exists) {
+        alert("Este horario ya fue agregado");
+        return;
+    }
+
+    schedules.push({day, time});
+    horarioInput.value = JSON.stringify(schedules);
+
+    // Actualiza los días únicos
+    const dias = [...new Set(schedules.map(s => s.day))];
+    diasInput.value = JSON.stringify(dias);
+
+    updateSchedulesTable();
+
+    // Limpiar campos
+    document.getElementById('scheduleDay').value = '';
+    document.getElementById('scheduleTime').value = '';
+}
+
 function removeSchedule(index) {
     const horarioInput = document.getElementById('horario');
+    const diasInput = document.getElementById('diasInput');
     let schedules = JSON.parse(horarioInput.value);
     schedules.splice(index, 1);
     horarioInput.value = JSON.stringify(schedules);
+
+    // Actualiza los días únicos
+    const dias = [...new Set(schedules.map(s => s.day))];
+    diasInput.value = JSON.stringify(dias);
+
     updateSchedulesTable();
 }
 
-    function confirmDelete(codigo) {
-        const modal = document.getElementById('confirmModal');
-        const confirmBtn = document.getElementById('confirmDeleteBtn');
-        
-        confirmBtn.onclick = function() {
-            document.getElementById(`delete-form-${codigo}`).submit();
-        };
-        
-        modal.classList.remove('hidden');
-    }
 
-    // Para edición, cargar datos en el formulario
-    @if(isset($curso))
-        document.addEventListener('DOMContentLoaded', function() {
-            // Cargar datos del curso en el formulario
-            // Ejemplo: document.getElementById('nombre').value = '{{ $curso->nombre }}';
-        });
-    @endif
 </script>
 @endpush
 @endsection

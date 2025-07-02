@@ -243,13 +243,13 @@ class AdminController extends Controller
 
     // METODOS ABM de CURSOS
     public function courses()
-    {
-        $cursos = Course::all();
-        $modalidades = ModalidadEnum::cases();
-        $diasSemana = DiaSemanaEnum::cases(); // 👈 aquí cargas los días
+{
+    $cursos = Course::all(); // 👈 Obtiene todos los cursos de la base de datos
+    $modalidades = ModalidadEnum::cases();
+    $diasSemana = DiaSemanaEnum::cases();
 
-        return view('admin.courses', compact('cursos', 'modalidades', 'diasSemana'));
-    }
+    return view('admin.courses', compact('cursos', 'modalidades', 'diasSemana'));
+}
 
     
     public function destroyCourse($codigo)
@@ -265,16 +265,20 @@ class AdminController extends Controller
     }
 
     public function editCourse($codigo)
-    {
-        if (Auth::user()->role !== 'admin') {
-            abort(403, 'Acceso no autorizado');
-        }
-
-        $curso = Course::findOrFail($codigo);
-        $cursos = Course::all();
-        
-        return view('admin.gestionCursos', compact('curso', 'cursos'));
+{
+    if (Auth::user()->role !== 'admin') {
+        abort(403, 'Acceso no autorizado');
     }
+
+    $curso = Course::findOrFail($codigo);
+    
+    $cursos = Course::all();
+    $modalidades = ModalidadEnum::cases();
+    $diasSemana = DiaSemanaEnum::cases();
+
+    return view('admin.courses', compact('curso', 'cursos', 'modalidades', 'diasSemana'));
+}
+
         
     public function create()
     {
@@ -357,4 +361,39 @@ class AdminController extends Controller
         }
 
     }
+
+ public function storeCourse(Request $request)
+{
+    if (Auth::user()->role !== 'admin') {
+        abort(403, 'Acceso no autorizado');
+    }
+
+    $validated = $request->validate([
+        'nombre' => 'required|string|max:255',
+        'descripcion' => 'nullable|string',
+        'fecha_inicio' => 'required|date',
+        'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+        'fecha_limite_inscripcion' => 'required|date|before_or_equal:fecha_inicio',
+        'cupo' => 'required|integer|min:1',
+        'modalidad' => 'required|string',
+        'horario' => 'required|json', 
+        'dias' => 'required|json',     
+    ]);
+
+    $courses = new Course();
+    $courses->nombre = $validated['nombre'];
+    $courses->descripcion = $validated['descripcion'] ?? null;
+    $courses->fecha_inicio = $validated['fecha_inicio'];
+    $courses->fecha_fin = $validated['fecha_fin'];
+    $courses->fecha_limite_inscripcion = $validated['fecha_limite_inscripcion'];
+    $courses->cupo = $validated['cupo'];
+    $courses->modalidad = $validated['modalidad'];
+    $courses->horario = json_decode($validated['horario'], true); 
+    $courses->dias = $validated['dias'];        
+
+    $courses->save();
+
+    return redirect()->route('admin.courses')->with('success', 'Curso creado correctamente.');
+}
+
 }
