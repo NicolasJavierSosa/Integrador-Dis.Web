@@ -56,7 +56,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('/admin/courses', [AdminController::class, 'courses'])->name('admin.courses');
     Route::get('/admin/roles', [AdminController::class, 'roles'])->name('admin.roles');
-    
+    Route::post('/admin/categories/store', [AdminController::class, 'storeCategory'])->name('admin.categories.store');
+
+
+
+
+
     // Rutas para ABM de usuarios
     Route::post('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
     Route::get('/admin/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');

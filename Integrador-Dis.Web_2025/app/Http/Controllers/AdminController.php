@@ -13,6 +13,8 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use App\Enums\ModalidadEnum;
 use App\Enums\DiaSemanaEnum;
+use App\Models\Category;
+
 
 class AdminController extends Controller
 {
@@ -244,11 +246,13 @@ class AdminController extends Controller
     // METODOS ABM de CURSOS
     public function courses()
 {
-    $cursos = Course::all(); // 👈 Obtiene todos los cursos de la base de datos
+    $cursos = Course::all(); 
+    $categorias = Category::all();
+    $docentes = User::role('Docente')->get();
     $modalidades = ModalidadEnum::cases();
     $diasSemana = DiaSemanaEnum::cases();
 
-    return view('admin.courses', compact('cursos', 'modalidades', 'diasSemana'));
+    return view('admin.courses', compact('cursos', 'docentes', 'categorias', 'modalidades', 'diasSemana'));
 }
 
     
@@ -280,15 +284,19 @@ class AdminController extends Controller
 }
 
         
-    public function create()
-    {
-        $modalidades = ModalidadEnum::cases();
-        $diasSemana = DiaSemanaEnum::cases();
-        $docentes = User::where('role', 'docente')->get();
-        $cursos = Course::all(); // 👉 esto faltaba
+public function storeCategory(Request $request) {
 
-        return view('admin.cursos.create', compact('modalidades', 'diasSemana', 'docentes', 'cursos'));
-    }
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+    ]);
+
+    Category::create($validated);
+
+    return redirect()->route('admin.courses')
+                     ->with('success', 'Categoría creada correctamente.');
+}
+
 
 
 

@@ -21,8 +21,8 @@
             
             <!-- Menú de Navegación -->
             <nav class="hidden md:flex space-x-8">
-                <a href="#" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg bg-gradient-custom-lilac transform hover-scale-105">Inicio</a>
-                <a href="#" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Mis Cursos</a>
+                <a href="{{ route('curso.inicio') }}" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg bg-gradient-custom-lilac transform hover-scale-105">Inicio</a>
+                <a href="{{ route('alumno.misCursos') }}" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Mis Cursos</a>
             </nav>
         </div>
 

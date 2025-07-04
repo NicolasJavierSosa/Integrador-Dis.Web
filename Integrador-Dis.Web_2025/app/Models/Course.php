@@ -30,7 +30,7 @@ class Course extends Model
         'fecha_inicio' => 'date',
         'fecha_fin' => 'date',
         'fecha_limite_inscripcion' => 'date',
-        'horario' => 'array', // ← Agregá esto
+        'horario' => 'array', 
         'dias' => 'array',
     ];
 

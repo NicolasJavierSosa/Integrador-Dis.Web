@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-{{ dd($docentes ?? 'NO HAY') }}
 @section('tittle', 'AureaCursos - Gestion de Cursos')
 @push('css')
     <link rel="stylesheet" href="{{asset('css/gestion.css')}}">
@@ -71,7 +70,8 @@
             <h2 class="text-4xl font-extrabold text-custom-dark-purple mb-8 text-center">Gestión de Cursos</h2>
 
             <form id="courseForm" method="POST"
-                action="{{ isset($curso) ? route('admin.cursos.update', $curso->codigo) : route('admin.cursos.store') }}">
+            onsubmit="return validateForm()"
+            action="{{ isset($curso) ? route('admin.cursos.update', $curso->codigo) : route('admin.cursos.store') }}">
                 @csrf
                 @isset($curso)
                     @method('PUT')
@@ -101,7 +101,7 @@
                         </button>
                     </div>
 
-                    {{-- Middle Column --}}
+                     {{-- Middle Column --}}
                     <div class="flex flex-col gap-4">
                         <div class="relative">
                             <label for="startDate" class="block text-gray-700 text-lg font-semibold mb-2">Fecha de
@@ -129,43 +129,34 @@
                                 @endforeach
                             </select>
                         </div>
-
-
-                        <!-- Docentes -->
-                        <div x-data="docentSelector()" class="w-full">
+                        <div x-data="docentesComponent()" class="w-full">
                             <label for="docents" class="block text-gray-700 text-lg font-semibold mb-2">Docente/s:</label>
 
-                            <select id="docents" name="docentes[]" multiple
-                                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm h-24">
-                                @forelse ($docentes as $docente)
-                                    <option value="{{ $docente->id }}">
-                                        {{ $docente->name }} {{ $docente->surname }}
-                                    </option>
-                                @empty
-                                    <option disabled>No hay docentes registrados.</option>
-                                @endforelse
+                            <select id="docents"
+                                x-model="selectedDocent"
+                                @change="addDocent()"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
+                            <option value="" disabled selected>Selecciona un docente</option>
+                            <template x-for="doc in docentes" :key="doc.id">
+                            <option :value="doc.id" x-text="doc.name"></option>
+                            </template>
                             </select>
 
                             <!-- Lista seleccionados -->
                             <div class="mt-4 flex flex-wrap gap-2">
-                                <template x-for="(doc, index) in selectedDocentes" :key="doc.id">
-                                <span class="flex items-center bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
-                                    <span x-text="doc.name"></span>
-                                    <button type="button" @click="removeDocent(index)" class="ml-2 text-purple-600 hover:text-purple-900">
-                                    &times;
-                                    </button>
-                                </span>
-                                </template>
-                            </div>
+                            <template x-for="(doc, index) in selectedDocentes" :key="doc.id">
+                            <span class="flex items-center bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                                <span x-text="doc.name"></span>
+                                <button type="button" @click="removeDocent(index)" class="ml-2 text-purple-600 hover:text-purple-900">&times;</button>
+                            </span>
+                            </template>
+                        </div>
 
-                            <!-- Input oculto para enviar ids seleccionados -->
-                            <template x-for="doc in selectedDocentes">
-                                <input type="hidden" name="docentes[]" :value="doc.id">
+                            <!-- Inputs ocultos -->
+                            <template x-for="doc in selectedDocentes" :key="doc.id">
+                            <input type="hidden" name="docentes[]" :value="doc.id" disabled>
                             </template>
                             </div>
-
-
-                        <!-- Fin docentes -->
                     </div>
 
                     {{-- Right Column --}}
@@ -228,46 +219,7 @@
                     </div>
                 </div>
 
-                <!-- OVERLAY MODAL -->
-                <div id="add-category-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50" onclick="closeModal('add-category-modal')">
-                <!-- MODAL CONTENT -->
-                <div class="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full relative transform transition-all duration-300 scale-100 opacity-100 modal-content"
-                    onclick="event.stopPropagation()">
-                    <!-- BOTÓN CERRAR -->
-                    <button onclick="closeModal('add-category-modal')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-3xl font-semibold">
-                    &times;
-                    </button>
-
-                    <!-- TÍTULO -->
-                    <h3 class="text-2xl font-bold text-purple-800 mb-6 text-center">Gestionar Categorías</h3>
-
-                    <!-- FORM NUEVA CATEGORÍA -->
-                    <div class="mb-8 p-4 border border-purple-200 rounded-lg">
-                    <h4 class="text-xl font-semibold text-purple-700 mb-4">Añadir Nueva Categoría</h4>
-                    <div class="mb-4">
-                        <label for="new-category-name-input" class="block text-gray-700 text-sm font-bold mb-2">Nombre de la Categoría:</label>
-                        <input type="text" id="new-category-name-input" placeholder="Ej: Programación"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-purple-500">
-                    </div>
-                    <div class="mb-6">
-                        <label for="new-category-description-input" class="block text-gray-700 text-sm font-bold mb-2">Descripción:</label>
-                        <textarea id="new-category-description-input" rows="3" placeholder="Breve descripción de la categoría"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-purple-500"></textarea>
-                    </div>
-                    <button onclick="addCategory()" class="bg-purple-600 text-white w-full py-3 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition duration-300 ease-in-out">
-                        Guardar Categoría
-                    </button>
-                    </div>
-
-                    <!-- LISTA CATEGORÍAS EXISTENTES -->
-                    <div>
-                    <h4 class="text-xl font-semibold text-purple-700 mb-4">Categorías Existentes</h4>
-                    <div id="category-list" class="space-y-4">
-                        <p class="text-gray-500 text-center" id="no-categories-message">No hay categorías registradas.</p>
-                    </div>
-                    </div>
-                </div>
-                </div>
+                
 
 
 
@@ -280,6 +232,61 @@
                 </div>
 
             </form>
+            <!-- OVERLAY MODAL -->
+            <div id="add-category-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50" onclick="closeModal('add-category-modal')">
+                <!-- MODAL CONTENT -->
+                <div class="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full relative transform transition-all duration-300 scale-100 opacity-100 modal-content"
+                    onclick="event.stopPropagation()">
+                    <!-- BOTÓN CERRAR -->
+                    <button onclick="closeModal('add-category-modal')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-3xl font-semibold">
+                        &times;
+                    </button>
+
+                    <!-- TÍTULO -->
+                    <h3 class="text-2xl font-bold text-purple-800 mb-6 text-center">Gestionar Categorías</h3>
+
+                    <!-- FORM NUEVA CATEGORÍA -->
+                    <form id="addCategoryForm" method="POST" action="{{ route('admin.categories.store') }}" class="mb-8 p-4 border border-purple-200 rounded-lg">
+                        @csrf
+
+                        <h4 class="text-xl font-semibold text-purple-700 mb-4">Añadir Nueva Categoría</h4>
+
+                        <div class="mb-4">
+                            <label for="new-category-name-input" class="block text-gray-700 text-sm font-bold mb-2">Nombre de la Categoría:</label>
+                            <input type="text" name="name" id="new-category-name-input" placeholder="Ej: Programación"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-purple-500">
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="new-category-description-input" class="block text-gray-700 text-sm font-bold mb-2">Descripción:</label>
+                            <textarea id="new-category-description-input" name="description" rows="3" placeholder="Breve descripción de la categoría"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-purple-500"></textarea>
+                        </div>
+
+                        <button type="submit"
+                            class="bg-purple-600 text-white w-full py-3 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition duration-300 ease-in-out">
+                            Guardar Categoría
+                        </button>
+                    </form>
+
+                    <!-- LISTA CATEGORÍAS EXISTENTES -->
+                    <div>
+                        <h4 class="text-xl font-semibold text-purple-700 mb-4">Categorías Existentes</h4>
+                        <div id="category-list" class="space-y-4">
+                            @forelse ($categorias as $categoria)
+                                <div class="p-2 bg-purple-100 rounded">
+                                    {{ $categoria->name }} - {{ $categoria->description }}
+                                </div>
+                            @empty
+                                <p class="text-gray-500 text-center" id="no-categories-message">
+                                    No hay categorías registradas.
+                                </p>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             @if ($errors->any())
                 <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show"
@@ -359,46 +366,92 @@
 
 @push('scripts')
 <script>
-    function docentSelector() {
-  return {
-    docentes: @json($docentes),
-    selectedDocent: '',
-    selectedDocentes: [],
 
-            addDocent() {
-            if (this.selectedDocent) {
-                const alreadyAdded = this.selectedDocentes.some(d => d.id == this.selectedDocent);
-                if (!alreadyAdded) {
-                const docent = this.docentes.find(d => d.id == this.selectedDocent);
-                this.selectedDocentes.push(docent);
-                }
-                this.selectedDocent = '';
-            }
-            },
-
-            removeDocent(index) {
-            this.selectedDocentes.splice(index, 1);
-            }
+  function docentesComponent() {
+    return {
+      // 👇 Lista hardcodeada de docentes con rol docente
+      docentes: [
+        { id: 1, name: 'Juan Pérez' },
+        { id: 2, name: 'María González' },
+        { id: 3, name: 'Ana Rodríguez' },
+        { id: 4, name: 'Luis Fernández' }
+      ],
+      selectedDocent: '',
+      selectedDocentes: [],
+      addDocent() {
+        const doc = this.docentes.find(d => d.id == this.selectedDocent);
+        if (doc && !this.selectedDocentes.some(d => d.id === doc.id)) {
+          this.selectedDocentes.push(doc);
         }
+        this.selectedDocent = ''; // Reinicia el combo box
+      },
+      removeDocent(index) {
+        this.selectedDocentes.splice(index, 1);
+      }
+    }
+  }
+function addCategory() {
+    const name = document.getElementById('new-category-name-input').value.trim();
+    const description = document.getElementById('new-category-description-input').value.trim();
+
+    if (!name) {
+        alert('Por favor ingresa un nombre.');
+        return;
+    }
+
+    fetch("{{ route('admin.categories.store') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        },
+        body: JSON.stringify({
+            name: name,
+            description: description
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('No se pudo guardar la categoría.');
         }
-
-
-
-
-
-        function openAddCategoryModal() {
-        document.getElementById('add-category-modal').classList.remove('hidden');
-        }
-
-        function closeModal(modalId) {
-        document.getElementById(modalId).classList.add('hidden');
-        }
-
-        function addCategory() {
-        // Tu lógica de guardar categoría
-        alert('Categoría guardada!');
+        return response.json();
+    })
+    .then(data => {
+        console.log('Categoría creada:', data);
         closeModal('add-category-modal');
-        }
+        document.getElementById('new-category-name-input').value = '';
+        document.getElementById('new-category-description-input').value = '';
+        updateCategoryList(data.category);
+    })
+    .catch(error => {
+        console.error(error);
+        alert('Error al guardar la categoría.');
+    });
+}
+
+function updateCategoryList(category) {
+    const list = document.getElementById('category-list');
+    const emptyMsg = document.getElementById('no-categories-message');
+
+    if (emptyMsg) {
+        emptyMsg.remove();
+    }
+
+    const item = document.createElement('div');
+    item.className = 'p-2 bg-purple-100 rounded';
+    item.textContent = `${category.name} - ${category.description || ''}`;
+
+    list.appendChild(item);
+}
+
+function openAddCategoryModal() {
+    document.getElementById('add-category-modal').classList.remove('hidden');
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+}
+
 
 
 
@@ -503,18 +556,31 @@ function addSchedule() {
 }
 
 function removeSchedule(index) {
-    const horarioInput = document.getElementById('horario');
-    const diasInput = document.getElementById('diasInput');
-    let schedules = JSON.parse(horarioInput.value);
-    schedules.splice(index, 1);
-    horarioInput.value = JSON.stringify(schedules);
+  const horarioInput = document.getElementById('horario');
+  const diasInput = document.getElementById('diasInput');
+  let schedules = JSON.parse(horarioInput.value);
+  schedules.splice(index, 1);
+  horarioInput.value = JSON.stringify(schedules);
 
-    // Actualiza los días únicos
-    const dias = [...new Set(schedules.map(s => s.day))];
-    diasInput.value = JSON.stringify(dias);
+  const dias = [...new Set(schedules.map(s => s.day))];
+  diasInput.value = JSON.stringify(dias);
 
-    updateSchedulesTable();
+  updateSchedulesTable();
 }
+
+
+function validateForm() {
+  const horarioInput = document.getElementById('horario');
+  let schedules = horarioInput.value ? JSON.parse(horarioInput.value) : [];
+
+  if (schedules.length === 0) {
+    alert("Debes especificar al menos un horario para guardar el curso.");
+    return false; // BLOQUEA el envío
+  }
+
+  return true; // Permite el envío
+}
+
 
 
 </script>

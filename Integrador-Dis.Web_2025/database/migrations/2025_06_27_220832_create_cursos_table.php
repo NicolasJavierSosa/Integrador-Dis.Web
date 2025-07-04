@@ -26,7 +26,8 @@ return new class extends Migration
             $table->json('dias');
 
             $table->string('modalidad');
-
+            $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
+            
             $table->timestamps();
         });
     }
