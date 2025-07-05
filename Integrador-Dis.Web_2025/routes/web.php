@@ -70,5 +70,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/admin/cursos/{codigo}', [AdminController::class, 'destroyCourse'])->name('admin.cursos.destroy');
     
     //Rutas para ABM de roles
-    
+    Route::get('/admin/roles/data', [AdminController::class, 'getRoles'])->name('admin.roles.data');
+    Route::post('/admin/roles', [AdminController::class, 'createRole'])->name('admin.roles.create');
+    Route::delete('/admin/roles/{id}', [AdminController::class, 'destroyRole'])->name('admin.roles.destroy');
 });

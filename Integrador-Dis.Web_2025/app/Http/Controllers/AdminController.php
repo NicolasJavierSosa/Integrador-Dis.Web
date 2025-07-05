@@ -13,6 +13,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use App\Enums\ModalidadEnum;
 use App\Enums\DiaSemanaEnum;
+use function PHPUnit\Framework\returnArgument;
 
 class AdminController extends Controller
 {
@@ -301,9 +302,32 @@ class AdminController extends Controller
             return redirect()->route('login')->with('error', 'Acceso no autorizado');
         }
 
-        $roles = Role::all();
+        $roles = Role::with('permissions')->get();
+        $permissions = Permission::all();
 
-        return view('admin.roles', compact('roles'));
+        return view('admin.roles', compact('roles', 'permissions'));
+    }
+
+    public function getRoles() {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['success' => false, 'message' => 'Acceso no autorizado'], 403);
+        }
+
+        try {
+            $roles = Role::with('permissions')->get();
+            $permissions = Permission::all();
+
+            return response()->json([
+                'success' => true,
+                'roles' => $roles,
+                'permissions' => $permissions
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cargar los roles: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function createRole(Request $request) {
@@ -315,46 +339,83 @@ class AdminController extends Controller
         }
 
         try {
-            $validatedData = $request->validate(['name' => 'required|max:255|string']);
-            $validatedData['name'] = strtolower($validatedData['name']);
-            if (Role::where('name', $validatedData['name'])->exists()) {
-                if ($request->expectsJson()) {
-                    return response()->json(['success' => false, 'message' => 'El rol ya existe'], 400);
-                }
-                return redirect()->back()->with('error', 'El rol ya existe');
-            }
+            $validatedData = $request->validate([
+                'name' => 'required|max:255|string|unique:roles,name',
+                'permissions' => 'array'
+            ]);
 
-            //valido la lista de permisos y verifico que existan
-            if ($request->has('permissions')) {
-                $permissions = $request->input('permissions');
-                $validPermissions = Permission::whereIn('name', $permissions)->pluck('name')->toArray();
-                if (count($validPermissions) !== count($permissions)) {
-                    if ($request->expectsJson()) {
-                        return response()->json(['success' => false, 'message' => 'Algunos permisos no existen'], 400);
-                    }
-                    return redirect()->back()->with('error', 'Algunos permisos no existen');
-                }
-                $validatedData['permissions'] = $validPermissions;
-            } else {
-                $validatedData['permissions'] = [];
-            }
 
-            // Crear el nuevo rol
             $role = Role::create(['name' => $validatedData['name']]);
+
+            if (isset($validatedData['permissions']) && count($validatedData['permissions']) > 0) {
+                $validPermissions = Permission::whereIn('id', $validatedData['permissions'])->pluck('name')->toArray();
+                $role->syncPermissions($validPermissions);
+            }
+
             if ($request->expectsJson()) {
-                return response()->json(['success' => true, 'message' => 'Rol creado correctamente']);
+                return response()->json([
+                    'success' => true, 
+                    'message' => 'Rol creado correctamente',
+                    'role' => $role->load('permissions')
+                ]);
             }
             return redirect()->back()->with('success', 'Rol creado correctamente');
 
-            //le asigno los permisos al rol
-            if (isset($validatedData['permissions']) && count($validatedData['permissions']) > 0) {
-                $role = Role::findByName($validatedData['name']);
-                $role->syncPermissions($validatedData['permissions']);
+        } catch (ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Errores de validación',
+                    'errors' => $e->errors()
+                ], 422);
             }
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al crear el rol: ' . $e->getMessage()
+                ], 500);
+            }
+            return redirect()->back()->with('error', 'Error al crear el rol: ' . $e->getMessage());
+        }
+    }
 
-        } catch (ValidationException $e){
-
+    public function destroyRole($id) {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['success' => false, 'message' => 'Acceso no autorizado'], 403);
         }
 
+        try {
+            $role = Role::findOrFail($id);
+
+            if (in_array(strtolower($role->name), ['admin'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se puede eliminar este rol del sistema'
+                ], 400);
+            }
+
+            $usersWithRole = User::where('role', $role->name)->count();
+            if ($usersWithRole > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se puede eliminar el rol porque hay usuarios asignados a él'
+                ], 400);
+            }
+
+            $role->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Rol eliminado correctamente'
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el rol: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
