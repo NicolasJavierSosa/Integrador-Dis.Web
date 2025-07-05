@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Enums\ModalidadEnum;
 use App\Enums\DiaSemanaEnum;
 use function PHPUnit\Framework\returnArgument;
+use App\Models\Category;
+
 
 class AdminController extends Controller
 {
@@ -244,13 +246,15 @@ class AdminController extends Controller
 
     // METODOS ABM de CURSOS
     public function courses()
-    {
-        $cursos = Course::all();
-        $modalidades = ModalidadEnum::cases();
-        $diasSemana = DiaSemanaEnum::cases(); // 👈 aquí cargas los días
+{
+    $cursos = Course::all(); 
+    $categorias = Category::all();
+    $docentes = User::role('Docente')->get();
+    $modalidades = ModalidadEnum::cases();
+    $diasSemana = DiaSemanaEnum::cases();
 
-        return view('admin.courses', compact('cursos', 'modalidades', 'diasSemana'));
-    }
+    return view('admin.courses', compact('cursos', 'docentes', 'categorias', 'modalidades', 'diasSemana'));
+}
 
     
     public function destroyCourse($codigo)
@@ -266,24 +270,36 @@ class AdminController extends Controller
     }
 
     public function editCourse($codigo)
-    {
-        if (Auth::user()->role !== 'admin') {
-            abort(403, 'Acceso no autorizado');
-        }
+{
+    if (Auth::user()->role !== 'admin') {
+        abort(403, 'Acceso no autorizado');
+    }
 
-        $curso = Course::findOrFail($codigo);
-        $cursos = Course::all();
+    $curso = Course::findOrFail($codigo);
+    
+    $cursos = Course::all();
+    $modalidades = ModalidadEnum::cases();
+    $diasSemana = DiaSemanaEnum::cases();
+
+    return view('admin.courses', compact('curso', 'cursos', 'modalidades', 'diasSemana'));
+}
+
         
-        return view('admin.gestionCursos', compact('curso', 'cursos'));
-    }
-        
-    public function create()
-    {
-        return view('admin.cursos.create', [
-            'modalidades' => ModalidadEnum::cases(),
-            'diasSemana' => DiaSemanaEnum::cases(),
-        ]);
-    }
+public function storeCategory(Request $request) {
+
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+    ]);
+
+    Category::create($validated);
+
+    return redirect()->route('admin.courses')
+                     ->with('success', 'Categoría creada correctamente.');
+}
+
+
+
 
     public function edit($codigo)
     {

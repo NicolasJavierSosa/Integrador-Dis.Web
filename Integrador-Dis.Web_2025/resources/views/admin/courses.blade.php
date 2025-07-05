@@ -54,12 +54,17 @@
             padding: 4px;
             border-radius: 4px;
         }
+        .fixed-save-btn {
+            position: absolute; /* clave */
+            bottom: 2rem;
+            right: 2rem;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
+        }
     </style>
 @endpush
 
 @section('contenido')
-    <!-- aca el contenido para agregar -->
-     <main class="flex-grow p-8 bg-gray-50">
+    <main class="flex-grow p-8 bg-gray-50">
         <section class="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-200">
             <h2 class="text-4xl font-extrabold text-custom-dark-purple mb-8 text-center">Gestión de Cursos</h2>
             
@@ -287,56 +292,81 @@
         </div>
     </div>
 
-    <!-- Custom Alert/Message Box -->
-    <div id="custom-alert" class="hidden">
-        <!-- El mensaje se insertará aquí -->
-    </div>
-        </section>
 
-        <!-- Cursos Registrados -->
-        <section class="bg-white rounded-xl shadow-lg p-8 border border-gray-200 mt-8">
-            <h2 class="text-3xl font-extrabold text-custom-dark-purple mb-6">Cursos registrados:</h2>
-            <div class="w-full overflow-x-auto">
-                <table id="registeredCoursesTable" class="min-w-full bg-white rounded-lg shadow-md">
-                    <thead>
-                        <tr class="bg-custom-lilac text-custom-white">
-                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider rounded-tl-lg">Nombre del Curso</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Categoría/s</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Docente/s</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Modalidad</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider">Fecha Inicio</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wider rounded-tr-lg">Acciones</th>
+            @if ($errors->any())
+                <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show"
+                    x-transition:leave="transition ease-in duration-500" x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+                    class="fixed top-8 right-8 z-50 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-lg">
+                    <ul class="text-sm list-disc pl-5">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+
+            <section class="bg-white rounded-xl shadow-xl p-8 border border-gray-200 mt-10">
+            <h2 class="text-3xl font-bold text-custom-dark-purple mb-6 flex items-center gap-2">
+                <i class="fas fa-book-open text-custom-purple"></i> Cursos registrados
+            </h2>
+
+            <div class="w-full overflow-x-auto rounded-lg border border-gray-300">
+                <table class="min-w-full bg-white rounded-lg shadow-sm divide-y divide-gray-200">
+                    <thead class="bg-custom-lilac text-black">
+                        <tr>
+                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wide rounded-tl-lg">📘
+                                Nombre</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wide">🎓 Modalidad</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wide">🕒 Horarios</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wide">📅 Fecha Inicio
+                            </th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold uppercase tracking-wide rounded-tr-lg">📅
+                                Fecha Final</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Ejemplo de fila de datos (se cargará desde Firestore) -->
-                        <tr class="border-b border-gray-200 hover:bg-gray-50 transition-all">
-                            <td class="py-3 px-4 text-gray-800">Introducción a Python</td>
-                            <td class="py-3 px-4 text-gray-800">Programación</td>
-                            <td class="py-3 px-4 text-gray-800">Juan Pérez</td>
-                            <td class="py-3 px-4 text-gray-800">Online</td>
-                            <td class="py-3 px-4 text-gray-800">2025-07-15</td>
-                            <td class="py-3 px-4">
-                                <button class="text-custom-purple hover:text-custom-dark-purple mr-3"><i class="fas fa-edit"></i> Editar</button>
-                                <button class="text-red-600 hover:text-red-800"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                            </td>
-                        </tr>
-                        <tr class="border-b border-gray-200 hover:bg-gray-50 transition-all">
-                            <td class="py-3 px-4 text-gray-800">Diseño UX/UI Avanzado</td>
-                            <td class="py-3 px-4 text-gray-800">Diseño Gráfico</td>
-                            <td class="py-3 px-4 text-gray-800">María García</td>
-                            <td class="py-3 px-4 text-gray-800">Híbrido</td>
-                            <td class="py-3 px-4 text-gray-800">2025-08-01</td>
-                            <td class="py-3 px-4">
-                                <button class="text-custom-purple hover:text-custom-dark-purple mr-3"><i class="fas fa-edit"></i> Editar</button>
-                                <button class="text-red-600 hover:text-red-800"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                            </td>
-                        </tr>
-                        <!-- Las filas se cargarán dinámicamente -->
+
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse ($cursos as $curso)
+                            <tr class="hover:bg-gray-50 transition-all">
+                                <td class="py-4 px-4 text-gray-800 font-semibold">{{ $curso->nombre }}</td>
+                                <td class="py-4 px-4 text-gray-700">{{ ucfirst($curso->modalidad) }}</td>
+
+                                <td class="py-4 px-4 text-gray-700 leading-snug">
+                                    @php
+                                        $horarios = is_array($curso->horario) ? $curso->horario : json_decode($curso->horario, true);
+                                    @endphp
+                                    @foreach ($horarios as $h)
+                                        <div class="flex items-center gap-2">
+                                            <i class="far fa-clock text-indigo-500"></i>
+                                            <span>{{ ucfirst($h['day']) }} - {{ $h['time'] }}</span>
+                                        </div>
+                                    @endforeach
+                                </td>
+
+                                <td class="py-4 px-4 text-gray-700">
+                                    {{ \Carbon\Carbon::parse($curso->fecha_inicio)->format('d/m/Y') }}
+                                </td>
+
+                                <td class="py-4 px-4 text-gray-700">
+                                    <span>{{ \Carbon\Carbon::parse($curso->fecha_fin)->format('d/m/Y') }}</span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-6 px-4 text-center text-gray-500 italic">
+                                    <i class="fas fa-info-circle"></i> No hay cursos registrados.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </section>
+
+        <script defer src="//unpkg.com/alpinejs"></script>
+
     </main>
 @endsection
 

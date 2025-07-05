@@ -10,12 +10,10 @@ class Course extends Model
     use HasFactory;
 
     protected $table = 'cursos';
-    protected $primaryKey = 'codigo';  // Clave primaria personalizada
-    public $incrementing = true;      // Clave string, no autoincremental
-    protected $keyType = 'integer';     // Es string
+    protected $primaryKey = 'codigo';  
+    public $incrementing = true;      
+    protected $keyType = 'integer';     
 
-    //modalidad
-    //dia
     protected $fillable = [
         'nombre',
         'descripcion',
@@ -23,8 +21,6 @@ class Course extends Model
         'fecha_fin',
         'fecha_limite_inscripcion',
         'cupo',
-        'costo_inscripcion',
-        'costo_mensual',
         'horario',
         'modalidad',
         'dias',
@@ -34,7 +30,7 @@ class Course extends Model
         'fecha_inicio' => 'date',
         'fecha_fin' => 'date',
         'fecha_limite_inscripcion' => 'date',
-        'horario' => 'array',
+        'horario' => 'array', 
         'dias' => 'array',
     ];
 
@@ -45,7 +41,7 @@ class Course extends Model
             'inscripciones',
             'curso_codigo',
             'user_id'
-        )->withPivot('fecha_inscripcion') // <-- COINCIDE con la migración
+        )->withPivot('fecha_inscripcion') 
         ->withTimestamps();
     }
 

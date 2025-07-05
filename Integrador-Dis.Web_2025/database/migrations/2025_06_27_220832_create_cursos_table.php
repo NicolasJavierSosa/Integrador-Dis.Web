@@ -21,15 +21,13 @@ return new class extends Migration
             $table->date('fecha_fin');
             $table->date('fecha_limite_inscripcion');
             $table->integer('cupo');
-            $table->decimal('costo_inscripcion', 8, 2);
-            $table->decimal('costo_mensual', 8, 2);
 
-            // 👇 CAMBIO: horario y dias como JSON
             $table->json('horario');
             $table->json('dias');
 
             $table->string('modalidad');
-
+            $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
+            
             $table->timestamps();
         });
     }
