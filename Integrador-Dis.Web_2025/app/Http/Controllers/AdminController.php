@@ -170,7 +170,7 @@ class AdminController extends Controller
                 'gender' => 'nullable|in:M,F,X',
                 'birth_date' => 'nullable|date',
                 'address' => 'nullable|string|max:255',
-                'phone' => 'nullable|string|max:20',
+                'phone' => 'nullable|string|numeric|max:10',
                 'role' => 'required|string|in:' . implode(',', $validRoles) // Validación dinámica
             ]);
 
