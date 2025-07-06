@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
 use App\Models\Inscription;
 use App\Models\Course;
 
@@ -55,5 +55,18 @@ class User extends Authenticatable
         return $this->hasMany(Inscription::class);
     }
 
+    public function showForm()
+    {
+        // Obtener los usuarios con el rol 'teacher'
+        $docentes = User::role('teacher')->get(['dni', 'name']); // Solo obtenemos el dni y el nombre
+
+        
+        return view('admin.courses', compact('docentes'));
+    }
+
+    public function getFullNameAttribute()
+    {
+        return "{$this->name} {$this->surname}";
+    }
 
 }

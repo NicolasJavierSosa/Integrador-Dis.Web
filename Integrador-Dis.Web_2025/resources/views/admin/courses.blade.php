@@ -129,34 +129,34 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div x-data="docentesComponent()" class="w-full">
+                        <div x-data="docentesComponent({{ $docentes->toJson() }})" class="w-full">
                             <label for="docents" class="block text-gray-700 text-lg font-semibold mb-2">Docente/s:</label>
 
                             <select id="docents"
-                                x-model="selectedDocent"
-                                @change="addDocent()"
-                                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
-                            <option value="" disabled selected>Selecciona un docente</option>
-                            <template x-for="doc in docentes" :key="doc.id">
-                            <option :value="doc.id" x-text="doc.name"></option>
-                            </template>
+                                    x-model="selectedDocent"
+                                    @change="addDocent()"
+                                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm">
+                                <option value="" disabled selected>Selecciona un docente</option>
+                                <template x-for="doc in docentes" :key="doc.id">
+                                    <option :value="doc.id" x-text="doc.full_name"></option>
+                                </template>
                             </select>
 
                             <!-- Lista seleccionados -->
                             <div class="mt-4 flex flex-wrap gap-2">
-                            <template x-for="(doc, index) in selectedDocentes" :key="doc.id">
-                            <span class="flex items-center bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
-                                <span x-text="doc.name"></span>
-                                <button type="button" @click="removeDocent(index)" class="ml-2 text-purple-600 hover:text-purple-900">&times;</button>
-                            </span>
-                            </template>
-                        </div>
+                                <template x-for="(doc, index) in selectedDocentes" :key="doc.id">
+                                    <span class="flex items-center bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                                        <span x-text="doc.name"></span>
+                                        <button type="button" @click="removeDocent(index)" class="ml-2 text-purple-600 hover:text-purple-900">&times;</button>
+                                    </span>
+                                </template>
+                            </div>
 
                             <!-- Inputs ocultos -->
                             <template x-for="doc in selectedDocentes" :key="doc.id">
-                            <input type="hidden" name="docentes[]" :value="doc.id" disabled>
+                                <input type="hidden" name="docentes[]" :value="doc.id" disabled>
                             </template>
-                            </div>
+                        </div>
                     </div>
 
                     {{-- Right Column --}}
@@ -367,29 +367,27 @@
 @push('scripts')
 <script>
 
-  function docentesComponent() {
+  function docentesComponent(docentes) {
     return {
-      // 👇 Lista hardcodeada de docentes con rol docente
-      docentes: [
-        { id: 1, name: 'Juan Pérez' },
-        { id: 2, name: 'María González' },
-        { id: 3, name: 'Ana Rodríguez' },
-        { id: 4, name: 'Luis Fernández' }
-      ],
-      selectedDocent: '',
-      selectedDocentes: [],
-      addDocent() {
-        const doc = this.docentes.find(d => d.id == this.selectedDocent);
-        if (doc && !this.selectedDocentes.some(d => d.id === doc.id)) {
-          this.selectedDocentes.push(doc);
+        docentes: docentes, // Recibe los docentes desde la vista
+        selectedDocent: '',
+        selectedDocentes: [],
+        addDocent() {
+            const doc = this.docentes.find(d => d.id == this.selectedDocent);
+            if (doc && !this.selectedDocentes.some(d => d.id === doc.id)) {
+                this.selectedDocentes.push(doc);
+            }
+            this.selectedDocent = ''; // Reinicia el combo box
+        },
+        removeDocent(index) {
+            this.selectedDocentes.splice(index, 1);
+        },
+        logDocentes() {
+            console.log(this.docentes); // Verifica los datos en la consola
         }
-        this.selectedDocent = ''; // Reinicia el combo box
-      },
-      removeDocent(index) {
-        this.selectedDocentes.splice(index, 1);
-      }
     }
-  }
+}
+
 function addCategory() {
     const name = document.getElementById('new-category-name-input').value.trim();
     const description = document.getElementById('new-category-description-input').value.trim();

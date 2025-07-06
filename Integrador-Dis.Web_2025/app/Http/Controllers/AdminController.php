@@ -69,7 +69,7 @@ class AdminController extends Controller
                 'birth_date' => 'nullable|date',
                 'address' => 'nullable|string|max:255',
                 'phone' => 'nullable|string|max:20',
-                'role' => 'required|string'
+                'role' => 'required|string|in:teacher,admin'
             ]);
 
             $newUser = new User();
@@ -89,7 +89,7 @@ class AdminController extends Controller
                 throw new Exception('El rol especificado no existe');
             }
             $newUser->role = $validatedData['role'];
-
+            $newUser->assignRole($validatedData['role']);
             $newUser->save();
 
             if ($request->expectsJson()) {
@@ -249,7 +249,7 @@ class AdminController extends Controller
 {
     $cursos = Course::all(); 
     $categorias = Category::all();
-    $docentes = User::role('Docente')->get();
+    $docentes = User::role('teacher')->get(['id', 'name', 'surname'])->append('full_name');
     $modalidades = ModalidadEnum::cases();
     $diasSemana = DiaSemanaEnum::cases();
 
