@@ -2,7 +2,15 @@ function fillFormFields(user) {
     const fields = ['role', 'dni', 'name', 'surname', 'gender', 'birth_date', 'email', 'address', 'phone'];
     fields.forEach(field => {
         const el = document.getElementById(`edit_${field}`);
-        if (el) el.value = user[field] || '';
+        if (el) {
+            el.value = user[field] || '';
+            // Asegurar que el rol se seleccione correctamente
+            if (field === 'role' && el.tagName === 'SELECT') {
+                Array.from(el.options).forEach(option => {
+                    option.selected = option.value === user[field];
+                });
+            }
+        }
     });
 }
 
