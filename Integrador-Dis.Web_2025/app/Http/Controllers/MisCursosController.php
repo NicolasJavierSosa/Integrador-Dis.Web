@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Curso;
+use App\Models\Course;
 
 class MisCursosController extends Controller
 {
@@ -20,7 +20,7 @@ class MisCursosController extends Controller
         return view('alumnos.cursosAlumno', compact('cursos'));
     }
 
-    public function darDeBaja(Curso $curso)
+    public function darDeBaja(Course $curso)
     {
         $user = auth()->user();
 

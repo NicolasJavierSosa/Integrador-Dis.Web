@@ -29,37 +29,66 @@
             </div>
         @endif
         <section class="mb-10 p-6 bg-purple-100 rounded-lg shadow-inner">
-            <h1 class="text-4xl font-extrabold text-purple-800 mb-4 text-center">¡Bienvenido a Instituto XXX!</h1>
+            <h1 class="text-4xl font-extrabold text-purple-800 mb-4 text-center">¡Bienvenido a los cursos de Aurea!</h1>
             <p class="text-lg text-purple-700 leading-relaxed text-center max-w-3xl mx-auto">
                 Explora nuestra amplia variedad de cursos diseñados para potenciar tu futuro.
             </p>
         </section>
 
         <!-- Sección de Cursos -->
-        <section id="cursos-section">
-            <h2 class="text-3xl font-bold text-purple-800 mb-6 text-center">Nuestros Cursos</h2>
-            <div id="course-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @foreach ($cursos as $curso)
-                <div class="card cursor-pointer p-4 border rounded"
-                    onclick="openModal(this)"
-                    data-codigo="{{ $curso->codigo }}"
-                    data-nombre="{{ $curso->nombre }}"
-                    data-descripcion="{{ $curso->descripcion }}"
-                    data-horario="{{ is_array($curso->horario) 
-                        ? collect($curso->horario)
-                            ->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))
-                            ->implode(', ')
-                        : collect(json_decode($curso->horario, true))
-                            ->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))
-                            ->implode(', ')
-                    }}"
-                    data-modalidad="{{ $curso->modalidad }}">
-                  <h3>{{ $curso->nombre }}</h3>
-                  <p>{{ $curso->descripcion }}</p>
+        <section id="cursos-section" class="py-16 bg-purple-200">
+    <h2 class="text-4xl font-extrabold text-purple-800 mb-12 text-center tracking-wide">Nuestros Cursos</h2>
+    <div id="course-list" class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        @foreach ($cursos as $curso)
+            @php
+                $fechaLimiteInscripcion = \Carbon\Carbon::parse($curso->fecha_limite_inscripcion);
+                $inscripcionCaducada = $fechaLimiteInscripcion->isPast();
+            @endphp
+            <div
+                class="relative p-8 rounded-xl shadow-lg transition-all duration-300 transform border border-transparent
+                {{ $inscripcionCaducada ? 'bg-gray-700 hover:shadow-xl hover:scale-100 cursor-not-allowed' : 'bg-purple-800 hover:shadow-2xl hover:scale-105 cursor-pointer' }}"
+                onclick="{{ $inscripcionCaducada ? '' : 'openModal(this)' }}"
+                data-codigo="{{ $curso->codigo }}"
+                data-nombre="{{ $curso->nombre }}"
+                data-descripcion="{{ $curso->descripcion }}"
+                data-horario="{{
+                    is_array($curso->horario)
+                        ? collect($curso->horario)->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))->implode(', ')
+                        : collect(json_decode($curso->horario, true))->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))->implode(', ')
+                }}"
+                data-modalidad="{{ $curso->modalidad }}"
+            >
+                @if ($inscripcionCaducada)
+                    <div class="absolute inset-0 bg-black bg-opacity-50 rounded-xl flex items-center justify-center">
+                        <span class="text-white text-xl font-bold uppercase tracking-wider">Inscripción Cerrada</span>
+                    </div>
+                @endif
+                <h3 class="text-2xl font-bold text-white mb-3">{{ $curso->nombre }}</h3>
+                <p class="text-purple-200 text-base mb-4 leading-relaxed">{{ $curso->descripcion }}</p>
+
+                <div class="text-white text-sm space-y-1">
+                    <p><strong class="text-purple-100">Modalidad:</strong> <span class="font-medium">{{ $curso->modalidad }}</span></p>
+                    <p><strong class="text-purple-100">Horario:</strong> <span class="font-medium">
+                        {{
+                            is_array($curso->horario)
+                                ? collect($curso->horario)->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))->implode(', ')
+                                : collect(json_decode($curso->horario, true))->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))->implode(', ')
+                        }}
+                    </span></p>
+                    <p><strong class="text-purple-100">Fecha de Inicio:</strong> <span class="font-medium">{{ \Carbon\Carbon::parse($curso->fecha_inicio)->format('d/m/Y') }}</span></p>
+                    <p><strong class="text-purple-100">Fecha de Fin:</strong> <span class="font-medium">{{ \Carbon\Carbon::parse($curso->fecha_fin)->format('d/m/Y') }}</span></p>
+                    <p class="pt-2">
+                        <strong class="text-purple-100">Inscripción hasta:</strong>
+                        <span class="font-medium {{ $inscripcionCaducada ? 'text-red-400 line-through' : 'text-yellow-300' }}">
+                            {{ \Carbon\Carbon::parse($curso->fecha_limite_inscripcion)->format('d/m/Y') }}
+                        </span>
+                    </p>
                 </div>
-            @endforeach
-           </div>
-        </section>
+            </div>
+        @endforeach
+    </div>
+</section>
+
     </main>
 
     <!-- Modal -->

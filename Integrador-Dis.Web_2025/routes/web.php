@@ -20,7 +20,7 @@ Route::get('/', function () {
 })->name('welcome');
 
 
-Route::get('/inicioAlumno', [CursoController::class, 'index'])
+Route::get('/cursos', [CursoController::class, 'index'])
      ->name('curso.inicio');
 
 Route::post('/curso/{codigo}/inscribirse', [InscripcionController::class, 'inscribir'])

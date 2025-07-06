@@ -17,15 +17,36 @@
             <!-- Logo o Nombre de la Institución -->
             <div class="flex items-center">
                 <i class="fas fa-graduation-cap text-custom-white text-3xl mr-3"></i>
-                <span class="text-custom-white text-2xl font-extrabold tracking-wide">Instituto XXX</span>
+                <span class="text-custom-white text-2xl font-extrabold tracking-wide">Instituto Aurea</span>
             </div>
 
             <!-- Menú de Navegación -->
             <nav class="hidden md:flex space-x-8">
-                <a href="{{ route('admin.dashboard') }}" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Inicio</a>
-                <a href="{{ route('admin.courses') }}" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Gestión de Cursos</a>
-                <a href="{{ route('admin.users') }}" class="text-custom-white text-lg font-semibold hover:text-custom-light-purple transition-all px-4 py-2 rounded-lg hover:bg-gradient-custom-lilac transform hover-scale-105">Gestión de Usuarios</a>
-            </nav>
+            <a href="{{ route('admin.dashboard') }}"
+            class="text-lg font-semibold transition-all px-4 py-2 rounded-lg transform hover-scale-105
+                    {{ request()->routeIs('admin.dashboard') 
+                        ? 'bg-gradient-custom-lilac text-custom-white'
+                        : 'text-custom-white hover:text-custom-light-purple hover:bg-gradient-custom-lilac' }}">
+            Inicio
+            </a>
+
+            <a href="{{ route('admin.courses') }}"
+            class="text-lg font-semibold transition-all px-4 py-2 rounded-lg transform hover-scale-105
+                    {{ request()->routeIs('admin.courses') 
+                        ? 'bg-gradient-custom-lilac text-custom-white'
+                        : 'text-custom-white hover:text-custom-light-purple hover:bg-gradient-custom-lilac' }}">
+            Gestión de Cursos
+            </a>
+
+            <a href="{{ route('admin.users') }}"
+            class="text-lg font-semibold transition-all px-4 py-2 rounded-lg transform hover-scale-105
+                    {{ request()->routeIs('admin.users') 
+                        ? 'bg-gradient-custom-lilac text-custom-white'
+                        : 'text-custom-white hover:text-custom-light-purple hover:bg-gradient-custom-lilac' }}">
+            Gestión de Usuarios
+            </a>
+        </nav>
+
         </div>
         <!-- Información de Usuario/Administrador -->
         <div class="flex items-center space-x-4">

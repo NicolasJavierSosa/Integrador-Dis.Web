@@ -14,7 +14,7 @@
       <div id="icono-logo" class="mr-3">
         <img src="{{ asset('images/default/logo.png') }}" alt="Logo del Instituto" id="logo-img" class="w-8 h-8">
       </div>
-      <h1 class="text-white text-lg font-semibold">Instituto XXX</h1>
+      <h1 class="text-white text-lg font-semibold">Instituto Aurea</h1>
     </header>
     
     <div class="p-8">
@@ -23,9 +23,7 @@
         <button id="loginTab" class="flex-1 py-2 px-4 text-center text-purple-700 font-medium bg-white rounded-full shadow-sm">
           Iniciar Sesión
         </button>
-        <button id="signupTab" onclick="window.location='{{ route('registro') }}'" class="flex-1 py-2 px-4 text-center text-gray-600 font-medium rounded-full hover:bg-gray-200 transition duration-200">
-          Registrarse
-        </button>
+        
       </div>
 
       <!-- Mostrar errores de sesión -->
@@ -114,12 +112,6 @@
             </a>
           </p>
           
-          <p class="text-center text-sm text-gray-600">
-            ¿No tienes cuenta? 
-            <a href="{{ route('registro') }}" id="switch-to-signup-link" class="font-medium text-purple-600 hover:text-purple-500 hover:underline">
-              Regístrate
-            </a>
-          </p>
         </div>
       </main>
     </div>
