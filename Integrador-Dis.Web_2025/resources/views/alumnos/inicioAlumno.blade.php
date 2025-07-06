@@ -116,9 +116,12 @@
     @auth
       <form id="inscripcion-form" method="POST" action="{{ route('curso.inscribirse', ['codigo' => '__CODIGO__']) }}">
       @csrf
-      <button type="submit" class="btn-primary w-full py-2 rounded">
-          Inscribirse ahora
-      </button>
+        <button 
+            type="button" 
+            onclick="abrirModalConfirmacion()" 
+            class="btn-primary w-full py-2 rounded">
+            Inscribirse ahora
+        </button>
   </form>
     @else
       <a href="{{ route('login') }}"
@@ -128,36 +131,61 @@
     @endauth
   </div>
 </div>
+
+
+    <!-- Modal de confirmación -->
+    <div id="confirm-modal" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-50">
+    <div class="bg-white p-6 rounded shadow-lg relative w-full max-w-md">
+        <h3 class="text-xl font-bold mb-4">Confirmar Inscripción</h3>
+        <p class="mb-6">¿Estás seguro de que quieres inscribirte en este curso?</p>
+
+        <div class="flex justify-end gap-4">
+        <form id="confirm-inscripcion-form" method="POST" action="">
+            @csrf
+            <button type="submit" class="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800">
+            Sí, Inscribirme
+            </button>
+        </form>
+        <button onclick="cerrarModalConfirmacion()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">
+            Cancelar
+        </button>
+        </div>
+    </div>
+    </div>
 @endsection
-
-
 
 @push('scripts')
 <script>
-    // scripts.js
+let codigoCursoSeleccionado = null;
 
 function openModal(card) {
-  // Rellenar título y descripción
   document.getElementById('modal-title').textContent = card.dataset.nombre;
   document.getElementById('modal-description').textContent = card.dataset.descripcion;
-
-  // Rellenar horario y modalidad
   document.getElementById('modal-schedule').textContent = card.dataset.horario;
   document.getElementById('modal-modality').textContent = card.dataset.modalidad;
 
-  // Ajustar la URL del formulario de inscripción
-  @auth
-    const form = document.getElementById('inscripcion-form');
-    form.action = form.action.replace('__CODIGO__', card.dataset.codigo);
-  @endauth
+  codigoCursoSeleccionado = card.dataset.codigo;
 
-  // Mostrar el modal
   document.getElementById('course-modal').classList.remove('hidden');
 }
 
 function closeModal() {
   document.getElementById('course-modal').classList.add('hidden');
 }
+
+function abrirModalConfirmacion() {
+  const formConfirm = document.getElementById('confirm-inscripcion-form');
+  const baseUrl = "{{ route('curso.inscribirse', ['codigo' => '__CODIGO__']) }}";
+  formConfirm.action = baseUrl.replace('__CODIGO__', codigoCursoSeleccionado);
+
+  document.getElementById('course-modal').classList.add('hidden');
+  document.getElementById('confirm-modal').classList.remove('hidden');
+}
+
+function cerrarModalConfirmacion() {
+  document.getElementById('confirm-modal').classList.add('hidden');
+}
+
 
 </script>
      <!-- <script src="{{ asset('js/scripts.js') }}"></script> -->

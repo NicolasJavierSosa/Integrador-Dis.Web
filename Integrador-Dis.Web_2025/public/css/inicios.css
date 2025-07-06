@@ -8,6 +8,9 @@ body {
 .footer-bg {
     background-color: #a78bfa;
 }
+[x-cloak] {
+  display: none !important;
+}
 .card-bg {
     background-color: #c4b5fd;
 }
