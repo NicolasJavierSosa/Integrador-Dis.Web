@@ -26,8 +26,15 @@
                     <p class="text-purple-100 text-sm mb-3">{{ $curso->descripcion }}</p>
                     <p class="text-white text-sm mb-2">Inicio: <span class="font-medium">{{ $curso->fecha_inicio }}</span></p>
                     <p class="text-white text-sm mb-2">Fin: <span class="font-medium">{{ $curso->fecha_fin }}</span></p>
-                    <p class="text-white text-sm mb-2">Horario: <span class="font-medium">{{ $curso->horario }}</span></p>
-                    <p class="text-white text-sm mb-2">Modalidad: <span class="font-medium">--</span></p>
+                    <p class="text-white text-sm mb-2">Horario: <span class="font-medium">{{ is_array($curso->horario) 
+                        ? collect($curso->horario)
+                            ->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))
+                            ->implode(', ')
+                        : collect(json_decode($curso->horario, true))
+                            ->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))
+                            ->implode(', ')
+                    }}</span></p>
+                    <p class="text-white text-sm mb-2">Modalidad: <span class="font-medium">{{ $curso->modalidad }}</span></p>
                     <form action="{{ route('alumno.bajaCurso', $curso->codigo) }}" method="POST" class="mt-4">
                         @csrf
                         @method('DELETE')

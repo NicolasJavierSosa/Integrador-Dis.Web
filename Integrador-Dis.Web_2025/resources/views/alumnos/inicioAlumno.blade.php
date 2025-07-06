@@ -39,23 +39,28 @@
         <section id="cursos-section">
             <h2 class="text-3xl font-bold text-purple-800 mb-6 text-center">Nuestros Cursos</h2>
             <div id="course-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-  @foreach ($cursos as $curso)
-    <div class="card cursor-pointer p-4 border rounded" onclick="openModal(this)"
-         data-codigo="{{ $curso->codigo }}"
-         data-nombre="{{ $curso->nombre }}"
-         data-descripcion="{{ $curso->descripcion }}"
-         data-horario="{{ $curso->horario }}"
-         data-modalidad="{{ $curso->modalidad }}">
-      <h3>{{ $curso->nombre }}</h3>
-      <p>{{ $curso->descripcion }}</p>
-    </div>
-  @endforeach
-</div>
-
-
+            @foreach ($cursos as $curso)
+                <div class="card cursor-pointer p-4 border rounded"
+                    onclick="openModal(this)"
+                    data-codigo="{{ $curso->codigo }}"
+                    data-nombre="{{ $curso->nombre }}"
+                    data-descripcion="{{ $curso->descripcion }}"
+                    data-horario="{{ is_array($curso->horario) 
+                        ? collect($curso->horario)
+                            ->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))
+                            ->implode(', ')
+                        : collect(json_decode($curso->horario, true))
+                            ->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))
+                            ->implode(', ')
+                    }}"
+                    data-modalidad="{{ $curso->modalidad }}">
+                  <h3>{{ $curso->nombre }}</h3>
+                  <p>{{ $curso->descripcion }}</p>
+                </div>
+            @endforeach
+           </div>
         </section>
     </main>
-    
 
     <!-- Modal -->
 <div id="course-modal" class="fixed inset-0 flex items-center justify-center hidden">
