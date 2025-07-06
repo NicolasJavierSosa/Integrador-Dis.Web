@@ -34,7 +34,7 @@ class AdminController extends Controller
     public function users() {
         // Verifico si el usuario autenticado es un administrador
         if (Auth::user()->role !== 'admin') {
-            abort(403, 'Acesso no autorizado');
+            abort(403, 'Acceso no autorizado');
             return view('/dashboard');
         }
 
@@ -58,6 +58,9 @@ class AdminController extends Controller
         }
 
         try{
+            // Obtener roles válidos dinámicamente
+            $validRoles = Role::pluck('name')->toArray();
+            
             // Valido los datos
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
@@ -68,8 +71,8 @@ class AdminController extends Controller
                 'gender' => 'nullable|in:M,F,X',
                 'birth_date' => 'nullable|date',
                 'address' => 'nullable|string|max:255',
-                'phone' => 'nullable|string|max:20',
-                'role' => 'required|string|in:teacher,admin'
+                'phone' => 'nullable|string|numeric|max:10',
+                'role' => 'required|string|in:' . implode(',', $validRoles) // Validación dinámica
             ]);
 
             $newUser = new User();
@@ -154,6 +157,9 @@ class AdminController extends Controller
         try {
             $user = User::findOrFail($request->user_id);
             
+            // Obtener roles válidos dinámicamente
+            $validRoles = Role::pluck('name')->toArray();
+            
             // Valido los datos
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
@@ -164,8 +170,8 @@ class AdminController extends Controller
                 'gender' => 'nullable|in:M,F,X',
                 'birth_date' => 'nullable|date',
                 'address' => 'nullable|string|max:255',
-                'phone' => 'nullable|string|max:20',
-                'role' => 'required|string'
+                'phone' => 'nullable|string|numeric|max:10',
+                'role' => 'required|string|in:' . implode(',', $validRoles) // Validación dinámica
             ]);
 
             // No permitir cambiar el rol del usuario autenticado

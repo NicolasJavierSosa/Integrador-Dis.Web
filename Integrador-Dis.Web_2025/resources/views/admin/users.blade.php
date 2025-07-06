@@ -117,9 +117,9 @@
                         <label for="role" class="block text-gray-700 text-lg font-semibold mb-2">Rol:</label>
                         <select id="role" name="role" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" required>
                             <option value="">Selecciona un rol</option>
-                            <option value="admin">Administrador</option>
-                            <option value="teacher">Docente</option>
-                            <option value="student">Estudiante</option>
+                            @foreach($roles as $role)
+                                <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -220,9 +220,9 @@
                         <label for="edit_role" class="block text-gray-700 text-lg font-semibold mb-2">Rol:</label>
                         <select id="edit_role" name="role" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm" required>
                             <option value="">Selecciona un rol</option>
-                            <option value="admin">Administrador</option>
-                            <option value="teacher">Docente</option>
-                            <option value="student">Estudiante</option>
+                            @foreach($roles as $role)
+                                <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
+                            @endforeach
                         </select>
                     </div>
 
