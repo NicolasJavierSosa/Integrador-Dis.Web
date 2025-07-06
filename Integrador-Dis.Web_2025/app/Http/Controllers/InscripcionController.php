@@ -27,11 +27,11 @@ class InscripcionController extends Controller
             }
 
             // Verificar si el curso tiene cupos disponibles
-            $inscritosCount = $curso->usuarios()->count();
+            $inscritosCount = $curso->estudiantes()->count();
             if ($inscritosCount >= $curso->cupo) {
-                return redirect()->back()
-                       ->with('error', 'El curso ya no tiene cupos disponibles.');
+                return redirect()->back()->with('error', 'El curso ya no tiene cupos disponibles.');
             }
+
 
             // Verificar si aún está en período de inscripción
             if (now()->gt($curso->fecha_limite_inscripcion)) {

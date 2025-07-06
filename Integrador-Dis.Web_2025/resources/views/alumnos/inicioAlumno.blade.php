@@ -66,24 +66,30 @@
                 <h3 class="text-2xl font-bold text-white mb-3">{{ $curso->nombre }}</h3>
                 <p class="text-purple-200 text-base mb-4 leading-relaxed">{{ $curso->descripcion }}</p>
 
-                <div class="text-white text-sm space-y-1">
-                    <p><strong class="text-purple-100">Modalidad:</strong> <span class="font-medium">{{ $curso->modalidad }}</span></p>
-                    <p><strong class="text-purple-100">Horario:</strong> <span class="font-medium">
-                        {{
-                            is_array($curso->horario)
-                                ? collect($curso->horario)->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))->implode(', ')
-                                : collect(json_decode($curso->horario, true))->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))->implode(', ')
-                        }}
-                    </span></p>
-                    <p><strong class="text-purple-100">Fecha de Inicio:</strong> <span class="font-medium">{{ \Carbon\Carbon::parse($curso->fecha_inicio)->format('d/m/Y') }}</span></p>
-                    <p><strong class="text-purple-100">Fecha de Fin:</strong> <span class="font-medium">{{ \Carbon\Carbon::parse($curso->fecha_fin)->format('d/m/Y') }}</span></p>
-                    <p class="pt-2">
-                        <strong class="text-purple-100">Inscripción hasta:</strong>
-                        <span class="font-medium {{ $inscripcionCaducada ? 'text-red-400 line-through' : 'text-yellow-300' }}">
-                            {{ \Carbon\Carbon::parse($curso->fecha_limite_inscripcion)->format('d/m/Y') }}
-                        </span>
-                    </p>
-                </div>
+               <div class="text-white text-sm space-y-1">
+                <p><strong class="text-purple-100">Modalidad:</strong> <span class="font-medium">{{ $curso->modalidad }}</span></p>
+                <p><strong class="text-purple-100">Horario:</strong> <span class="font-medium">
+                    {{
+                        is_array($curso->horario)
+                            ? collect($curso->horario)->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))->implode(', ')
+                            : collect(json_decode($curso->horario, true))->map(fn($h) => ($h['day'] ?? $h['dia']) . ' - ' . ($h['time'] ?? $h['hora']))->implode(', ')
+                    }}
+                </span></p>
+                <p><strong class="text-purple-100">Fecha de Inicio:</strong> <span class="font-medium">{{ \Carbon\Carbon::parse($curso->fecha_inicio)->format('d/m/Y') }}</span></p>
+                <p><strong class="text-purple-100">Fecha de Fin:</strong> <span class="font-medium">{{ \Carbon\Carbon::parse($curso->fecha_fin)->format('d/m/Y') }}</span></p>
+                <p><strong class="text-purple-100">Cantidad de cupos:</strong> 
+                <span class="font-medium">
+                    {{ $curso->cupo - $curso->estudiantes_count }}
+                </span>
+                </p>
+
+                <p class="pt-2">
+                    <strong class="text-purple-100">Inscripción hasta:</strong>
+                    <span class="font-medium {{ $inscripcionCaducada ? 'text-red-400 line-through' : 'text-yellow-300' }}">
+                        {{ \Carbon\Carbon::parse($curso->fecha_limite_inscripcion)->format('d/m/Y') }}
+                    </span>
+                </p>
+            </div>
             </div>
         @endforeach
     </div>

@@ -11,25 +11,23 @@ class Inscription extends Model
 
     protected $table = 'inscripciones';
 
-public function curso() {
-    return $this->belongsTo(Course::class, 'curso_codigo', 'codigo');
-}
-
     protected $fillable = [
         'user_id',
-        'curso_id',
-        'status',
-        'amount_id',
-        'notes',
-        'fecha_inscripcion'
+        'curso_codigo',
+        'fecha_inscripcion',
     ];
 
     protected $casts = [
-        'inscripciones_date' => 'datetime',
+        'fecha_inscripcion' => 'datetime',
     ];
 
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function curso()
+    {
+        return $this->belongsTo(Course::class, 'curso_codigo', 'codigo');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -46,4 +46,9 @@ class Course extends Model
     }
 
 
+    public function estudiantes()
+    {
+        return $this->usuarios()->where('role', 'student');
+    }
+
 }

@@ -11,14 +11,19 @@ class MisCursosController extends Controller
      * Muestra la pantalla de inicio del alumno con sus cursos inscritos.
      */
     public function misCursos() 
-    {
-        $user = auth()->user();
+{
+    $user = auth()->user();
 
-        // Gracias a la relación belongsToMany, trae los cursos inscritos
-        $cursos = $user->cursos()->get();
+    // Trae cursos con la cuenta de usuarios inscritos
+    $cursos = $user->cursos()
+        ->withCount(['usuarios as estudiantes_count' => function($q) {
+            $q->where('role', 'student');
+        }])
+        ->get();
 
-        return view('alumnos.cursosAlumno', compact('cursos'));
-    }
+    return view('alumnos.cursosAlumno', compact('cursos'));
+}
+
 
     public function darDeBaja(Course $curso)
     {
