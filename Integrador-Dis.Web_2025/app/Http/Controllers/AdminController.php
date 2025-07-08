@@ -72,7 +72,7 @@ class AdminController extends Controller
                 'gender' => 'nullable|in:M,F,X',
                 'birth_date' => 'nullable|date',
                 'address' => 'nullable|string|max:255',
-                'phone' => 'nullable|string|numeric|max:10',
+                'phone' => 'nullable|string|numeric|max:9999999999',
                 'role' => 'required|string|in:' . implode(',', $validRoles) // Validación dinámica
             ]);
 
@@ -171,7 +171,7 @@ class AdminController extends Controller
                 'gender' => 'nullable|in:M,F,X',
                 'birth_date' => 'nullable|date',
                 'address' => 'nullable|string|max:255',
-                'phone' => 'nullable|string|numeric|max:10',
+                'phone' => 'nullable|string|numeric|max:9999999999',
                 'role' => 'required|string|in:' . implode(',', $validRoles) // Validación dinámica
             ]);
 
@@ -296,7 +296,7 @@ public function storeCategory(Request $request) {
 
     $validated = $request->validate([
         'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
+        'description' => 'required|nullable|string',
     ]);
 
     Category::create($validated);
