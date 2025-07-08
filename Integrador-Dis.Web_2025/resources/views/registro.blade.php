@@ -14,7 +14,7 @@
         <div id="icono-logo">
             <img src="/Integrador-Dis.Web_2025/resources/imagenes/logo.png" alt="Logo del Instituto" id="logo-img">
         </div>
-        <h1 class="text-white text-lg font-semibold">Instituto XXX</h1>
+        <h1 class="text-white text-lg font-semibold">Instituto Aurea</h1>
         </header>
         <div class="p-8">
         <!-- Pestañas de Login y Sign Up -->

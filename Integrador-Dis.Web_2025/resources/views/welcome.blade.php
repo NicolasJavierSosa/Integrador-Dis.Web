@@ -56,7 +56,7 @@
         </div>
         <!-- Sección de bienvenida principal -->
         <section class="bg-purple-100 p-8 rounded-lg mb-8 shadow-inner border border-purple-200">
-            <h1 class="text-4xl font-bold text-purple-800 mb-4">¡Bienvenido a Instituto XXX!</h1>
+            <h1 class="text-4xl font-bold text-purple-800 mb-4">¡Bienvenido a Instituto Aurea!</h1>
             <p class="text-lg text-purple-700">Explora nuestra amplia variedad de oportunidades de aprendizaje diseñadas para potenciar tu futuro.</p>
         </section>
 
@@ -64,7 +64,7 @@
         <section class="mb-8">
             <h2 class="text-3xl font-bold text-purple-800 mb-6">Sobre Nuestro Instituto</h2>
             <div class="text-left text-gray-700 mb-8 max-w-4xl mx-auto">
-                <p class="mb-4">En el Instituto XXX, nos dedicamos a ofrecer una educación de calidad que te prepare para los desafíos del mañana. Creemos firmemente en el poder del conocimiento para transformar vidas y construir un futuro mejor.</p>
+                <p class="mb-4">En el Instituto Aurea, nos dedicamos a ofrecer una educación de calidad que te prepare para los desafíos del mañana. Creemos firmemente en el poder del conocimiento para transformar vidas y construir un futuro mejor.</p>
                 <p class="mb-4">Nuestra misión es proporcionar un ambiente de aprendizaje innovador y accesible, donde cada estudiante pueda desarrollar al máximo su potencial. Contamos con un equipo de instructores altamente calificados y una metodología que prioriza la práctica y la aplicación real de lo aprendido.</p>
                 <p>Únete a nuestra comunidad y descubre cómo podemos ayudarte a alcanzar tus metas profesionales y personales. ¡Tu éxito es nuestra prioridad!</p>
             </div>
