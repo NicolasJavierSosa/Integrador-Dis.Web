@@ -15,6 +15,7 @@ use App\Enums\ModalidadEnum;
 use App\Enums\DiaSemanaEnum;
 use function PHPUnit\Framework\returnArgument;
 use App\Models\Category;
+use Illuminate\Validation\Rule;
 
 
 class AdminController extends Controller
@@ -442,37 +443,54 @@ public function storeCategory(Request $request) {
     }
 
     
- public function storeCourse(Request $request)
-{
-    if (Auth::user()->role !== 'admin') {
-        abort(403, 'Acceso no autorizado');
+    public function storeCourse(Request $request)
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Acceso no autorizado');
+        }
+
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255|unique:cursos,nombre',
+            'descripcion' => 'nullable|string',
+            'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+            'fecha_limite_inscripcion' => 'required|date|before_or_equal:fecha_inicio',
+            'cupo' => 'required|integer|min:1',
+            'modalidad' => 'required|string',
+            'horario' => 'required|json',
+            'dias' => 'required|json',
+        ], [
+            'nombre.required' => 'El nombre del curso es obligatorio.',
+            'nombre.unique' => 'Ya existe un curso con este nombre.',
+            'fecha_inicio.required' => 'La fecha de inicio es obligatoria.',
+            'fecha_inicio.date' => 'La fecha de inicio debe ser una fecha válida.',
+            'fecha_fin.required' => 'La fecha de fin es obligatoria.',
+            'fecha_fin.date' => 'La fecha de fin debe ser una fecha válida.',
+            'fecha_fin.after_or_equal' => 'La fecha de fin debe ser igual o posterior a la fecha de inicio.',
+            'fecha_limite_inscripcion.required' => 'La fecha límite de inscripción es obligatoria.',
+            'fecha_limite_inscripcion.date' => 'La fecha límite de inscripción debe ser una fecha válida.',
+            'fecha_limite_inscripcion' => 'required|date|after_or_equal:today|before_or_equal:fecha_inicio',
+            'cupo.required' => 'El cupo es obligatorio.',
+            'cupo.integer' => 'El cupo debe ser un número entero.',
+            'cupo.min' => 'El cupo debe ser al menos 1.',
+            'modalidad.required' => 'La modalidad es obligatoria.',
+            'horario.required' => 'Debe agregar al menos un horario.',
+            'dias.required' => 'Debe seleccionar al menos un día.',
+        ]);
+
+        $courses = new Course();
+        $courses->nombre = $validated['nombre'];
+        $courses->descripcion = $validated['descripcion'] ?? null;
+        $courses->fecha_inicio = $validated['fecha_inicio'];
+        $courses->fecha_fin = $validated['fecha_fin'];
+        $courses->fecha_limite_inscripcion = $validated['fecha_limite_inscripcion'];
+        $courses->cupo = $validated['cupo'];
+        $courses->modalidad = $validated['modalidad'];
+        $courses->horario = $validated['horario'];
+        $courses->dias = $validated['dias'];
+
+        $courses->save();
+
+        return redirect()->route('admin.courses')->with('success', 'Curso creado correctamente.');
     }
-
-    $validated = $request->validate([
-        'nombre' => 'required|string|max:255',
-        'descripcion' => 'nullable|string',
-        'fecha_inicio' => 'required|date',
-        'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
-        'fecha_limite_inscripcion' => 'required|date|before_or_equal:fecha_inicio',
-        'cupo' => 'required|integer|min:1',
-        'modalidad' => 'required|string',
-        'horario' => 'required|json', 
-        'dias' => 'required|json',     
-    ]);
-
-    $courses = new Course();
-    $courses->nombre = $validated['nombre'];
-    $courses->descripcion = $validated['descripcion'] ?? null;
-    $courses->fecha_inicio = $validated['fecha_inicio'];
-    $courses->fecha_fin = $validated['fecha_fin'];
-    $courses->fecha_limite_inscripcion = $validated['fecha_limite_inscripcion'];
-    $courses->cupo = $validated['cupo'];
-    $courses->modalidad = $validated['modalidad'];
-    $courses->horario = ($validated['horario']); 
-    $courses->dias = $validated['dias'];        
-
-    $courses->save();
-
-    return redirect()->route('admin.courses')->with('success', 'Curso creado correctamente.');
-}
 }

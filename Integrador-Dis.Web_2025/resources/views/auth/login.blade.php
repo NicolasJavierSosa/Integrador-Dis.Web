@@ -21,9 +21,9 @@
       <!-- Pestañas de Login y Sign Up -->
       <div class="flex bg-gray-100 rounded-full p-1 mb-6 border border-gray-300">
         <button id="loginTab" class="flex-1 py-2 px-4 text-center text-purple-700 font-medium bg-white rounded-full shadow-sm">
-          Iniciar Sesión
-        </button>
-        
+        Iniciar Sesion</button>
+        <button id="signupTab" class="flex-1 py-2 px-4 text-center text-gray-600 font-medium rounded-full">
+        Registrarse</button>
       </div>
 
       <!-- Mostrar errores de sesión -->

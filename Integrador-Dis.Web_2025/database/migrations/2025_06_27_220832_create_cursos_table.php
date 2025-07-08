@@ -15,15 +15,15 @@ return new class extends Migration
             // Clave primaria
             $table->integer('codigo')->autoIncrement()->primary();
 
-            $table->string('nombre');
+            $table->string('nombre')->unique();
             $table->text('descripcion')->nullable();
             $table->date('fecha_inicio');
             $table->date('fecha_fin');
             $table->date('fecha_limite_inscripcion');
             $table->integer('cupo');
 
-            $table->json('horario');
-            $table->json('dias');
+            $table->json('horario')->nullable();
+            $table->json('dias')->nullable();
 
             $table->string('modalidad');
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();

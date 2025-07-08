@@ -113,9 +113,12 @@
                         <div class="relative">
                             <label for="enrollmentDeadline" class="block text-gray-700 text-lg font-semibold mb-2">Fecha
                                 límite de inscripciones:</label>
-                            <input type="date" id="enrollmentDeadline" name="fecha_limite_inscripcion"
-                                value="{{ old('fecha_limite_inscripcion', $curso->fecha_limite_inscripcion ?? '') }}"
-                                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm pr-10">
+                            <input type="date"
+                            id="enrollmentDeadline"
+                            name="fecha_limite_inscripcion"
+                            value="{{ old('fecha_limite_inscripcion', $curso->fecha_limite_inscripcion ?? '') }}"
+                            min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-lilac shadow-sm pr-10">
                         </div>
                         <div>
                             <label for="modality" class="block text-gray-700 text-lg font-semibold mb-2">Modalidad:</label>
@@ -219,17 +222,15 @@
                     </div>
                 </div>
 
-                
-
-
-
-
-                <div class="relative mt-8 flex justify-between items-center">
-                    <button type="submit"
-                        class="bg-emerald-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-emerald-600 transition-all transform hover-scale-105 fixed-save-btn">
-                        {{ isset($curso) ? 'Actualizar' : 'Guardar' }}
-                    </button>
+                <div class="mt-8 flex justify-end">
+                <button type="submit"
+                    class="bg-emerald-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-emerald-600 transition hover:scale-105">
+                    {{ isset($curso) ? 'Actualizar' : 'Guardar' }}
+                </button>
                 </div>
+
+
+
 
             </form>
             <!-- OVERLAY MODAL -->

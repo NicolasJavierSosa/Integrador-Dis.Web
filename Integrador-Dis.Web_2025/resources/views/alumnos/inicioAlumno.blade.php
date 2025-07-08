@@ -41,7 +41,7 @@
     <div id="course-list" class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         @foreach ($cursos as $curso)
             @php
-                $fechaLimiteInscripcion = \Carbon\Carbon::parse($curso->fecha_limite_inscripcion);
+                $fechaLimiteInscripcion = \Carbon\Carbon::parse($curso->fecha_limite_inscripcion)->endOfDay();
                 $inscripcionCaducada = $fechaLimiteInscripcion->isPast();
             @endphp
             <div

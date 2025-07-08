@@ -126,7 +126,7 @@ class CoursesAndInscriptionsSeeder extends Seeder
         // === 2️⃣ Crear 30 alumnos ===
         for ($i = 1; $i <= 30; $i++) {
             $student = User::create([
-                'role' => 'student',
+                // Puedes quitar 'role' => 'student' si quieres
                 'dni' => str_pad($i, 8, '0', STR_PAD_LEFT),
                 'name' => "Alumno{$i}",
                 'surname' => "Apellido{$i}",
@@ -138,6 +138,9 @@ class CoursesAndInscriptionsSeeder extends Seeder
                 'password' => Hash::make('password123'),
             ]);
 
+            // Asignar rol correcto
+            $student->assignRole('student');
+
             // Inscribirlo a 1-2 cursos aleatorios
             $selectedCourses = collect($createdCourses)->random(rand(1, 2));
             foreach ($selectedCourses as $course) {
@@ -147,10 +150,11 @@ class CoursesAndInscriptionsSeeder extends Seeder
             }
         }
 
+
         // === 3️⃣ Crear 5 profesores ===
         for ($j = 1; $j <= 5; $j++) {
             $teacher = User::create([
-                'role' => 'teacher',
+                'role' => 'teacher', 
                 'dni' => str_pad(9000 + $j, 8, '0', STR_PAD_LEFT),
                 'name' => "Profesor{$j}",
                 'surname' => "Apellido{$j}",
@@ -162,8 +166,24 @@ class CoursesAndInscriptionsSeeder extends Seeder
                 'password' => Hash::make('password123'),
             ]);
 
-
+            $teacher->assignRole('teacher'); 
         }
+
+        $admin = User::create([
+        'dni' => '77777777',
+        'role' => 'admin',
+        'name' => 'Admin',
+        'surname' => 'Master',
+        'gender' => 'Masculino',
+        'birth_date' => '1990-01-01',
+        'email' => 'admin@correo.com',
+        'address' => 'Oficina Principal',
+        'phone' => '111111111',
+        'password' => Hash::make('admin123'), 
+    ]);
+
+    $admin->assignRole('admin');
+
 
         $this->command->info('✅ Se crearon cursos, 30 alumnos, 5 profesores e inscripciones aleatorias.');
     }

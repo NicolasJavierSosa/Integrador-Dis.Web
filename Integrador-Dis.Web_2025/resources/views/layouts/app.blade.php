@@ -45,6 +45,14 @@
                         : 'text-custom-white hover:text-custom-light-purple hover:bg-gradient-custom-lilac' }}">
             Gestión de Usuarios
             </a>
+            <a href="{{ route('admin.roles') }}"
+            class="text-lg font-semibold transition-all px-4 py-2 rounded-lg transform hover-scale-105
+                    {{ request()->routeIs('admin.roles')
+                        ? 'bg-gradient-custom-lilac text-custom-white'
+                        : 'text-custom-white hover:text-custom-light-purple hover:bg-gradient-custom-lilac' }}">
+            Gestión de Roles
+            </a>
+                        
         </nav>
 
         </div>
